@@ -2,6 +2,8 @@
 
 A polished Home Assistant Lovelace card for Android TV — a real remote, not grid of YAML buttons.
 
+<img src="images/preview.png" alt="Android TV Plus card" width="320">
+
 It gives you **two navigation styles** in one card:
 
 - **D-pad** — a classic directional pad with press-and-hold key repeat.
