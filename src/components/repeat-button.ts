@@ -17,7 +17,11 @@ export class AtvRepeatButton extends LitElement {
 
   private down(e: PointerEvent) {
     e.preventDefault();
-    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      /* pointer already gone; the key still fires */
+    }
     this.repeater.start();
   }
 

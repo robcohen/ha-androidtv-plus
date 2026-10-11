@@ -30,7 +30,11 @@ export class AtvDpad extends LitElement {
         aria-label=${label}
         @pointerdown=${(e: PointerEvent) => {
           e.preventDefault();
-          (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+          try {
+            (e.target as HTMLElement).setPointerCapture(e.pointerId);
+          } catch {
+            /* pointer already gone; the key still fires */
+          }
           this.press(key);
         }}
         @pointerup=${() => this.release()}

@@ -3,7 +3,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
         class="btn"
         data-key=${t}
         aria-label=${i}
-        @pointerdown=${e=>{e.preventDefault(),e.target.setPointerCapture?.(e.pointerId),this.press(t)}}
+        @pointerdown=${e=>{e.preventDefault();try{e.target.setPointerCapture(e.pointerId)}catch{}this.press(t)}}
         @pointerup=${()=>this.release()}
         @pointercancel=${()=>this.release()}
         @pointerleave=${()=>this.release()}
@@ -63,7 +63,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
     .btn[data-key='DPAD_CENTER'] ha-icon {
       --mdc-icon-size: 44px;
     }
-  `,xt=((t,e)=>{for(var i,r=e,s=t.length-1;s>=0;s--)(i=t[s])&&(r=i(r)||r);return r})([ct("atv-dpad")],xt);var At=Object.defineProperty,Et=Object.getOwnPropertyDescriptor,kt=(t,e,i,r)=>{for(var s,o=r>1?void 0:r?Et(e,i):e,n=t.length-1;n>=0;n--)(s=t[n])&&(o=(r?s(e,i,o):s(o))||o);return r&&o&&At(e,i,o),o};let St=class extends nt{constructor(){super(...arguments),this.pressed=!1,this.originX=0,this.originY=0,this.lastX=0,this.lastY=0,this.moved=!1}onDown(t){t.preventDefault(),this.pressed=!0,this.moved=!1,this.originX=this.lastX=t.clientX,this.originY=this.lastY=t.clientY,t.currentTarget.setPointerCapture(t.pointerId)}onMove(t){if(!this.pressed)return;const e=t.clientX-this.lastX,i=t.clientY-this.lastY;if(Math.hypot(t.clientX-this.originX,t.clientY-this.originY)>18&&(this.moved=!0),Math.hypot(e,i)<34)return;const r=Math.abs(e)>=Math.abs(i)?e>0?bt:gt:i>0?ft:vt;_t(this,r),this.lastX=t.clientX,this.lastY=t.clientY}onUp(){this.pressed&&!this.moved&&_t(this,yt),this.pressed=!1}render(){return V`
+  `,xt=((t,e)=>{for(var i,r=e,s=t.length-1;s>=0;s--)(i=t[s])&&(r=i(r)||r);return r})([ct("atv-dpad")],xt);var At=Object.defineProperty,Et=Object.getOwnPropertyDescriptor,kt=(t,e,i,r)=>{for(var s,o=r>1?void 0:r?Et(e,i):e,n=t.length-1;n>=0;n--)(s=t[n])&&(o=(r?s(e,i,o):s(o))||o);return r&&o&&At(e,i,o),o};let St=class extends nt{constructor(){super(...arguments),this.pressed=!1,this.originX=0,this.originY=0,this.lastX=0,this.lastY=0,this.moved=!1}onDown(t){t.preventDefault(),this.pressed=!0,this.moved=!1,this.originX=this.lastX=t.clientX,this.originY=this.lastY=t.clientY;try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}}onMove(t){if(!this.pressed)return;const e=t.clientX-this.lastX,i=t.clientY-this.lastY;if(Math.hypot(t.clientX-this.originX,t.clientY-this.originY)>18&&(this.moved=!0),Math.hypot(e,i)<34)return;const r=Math.abs(e)>=Math.abs(i)?e>0?bt:gt:i>0?ft:vt;_t(this,r),this.lastX=t.clientX,this.lastY=t.clientY}onUp(){this.pressed&&!this.moved&&_t(this,yt),this.pressed=!1}render(){return V`
       <div
         class="pad ${this.pressed?"pressed":""}"
         role="button"
@@ -119,7 +119,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       color: var(--secondary-text-color);
       pointer-events: none;
     }
-  `,kt([pt()],St.prototype,"pressed",2),St=kt([ct("atv-touchpad")],St);var Pt=Object.defineProperty,Ct=Object.getOwnPropertyDescriptor,Ot=(t,e,i,r)=>{for(var s,o=r>1?void 0:r?Ct(e,i):e,n=t.length-1;n>=0;n--)(s=t[n])&&(o=(r?s(e,i,o):s(o))||o);return r&&o&&Pt(e,i,o),o};let Tt=class extends nt{constructor(){super(...arguments),this.key="",this.icon="",this.label="",this.repeater=new wt(()=>_t(this,this.key))}down(t){t.preventDefault(),t.currentTarget.setPointerCapture?.(t.pointerId),this.repeater.start()}render(){return V`
+  `,kt([pt()],St.prototype,"pressed",2),St=kt([ct("atv-touchpad")],St);var Pt=Object.defineProperty,Ct=Object.getOwnPropertyDescriptor,Ot=(t,e,i,r)=>{for(var s,o=r>1?void 0:r?Ct(e,i):e,n=t.length-1;n>=0;n--)(s=t[n])&&(o=(r?s(e,i,o):s(o))||o);return r&&o&&Pt(e,i,o),o};let Tt=class extends nt{constructor(){super(...arguments),this.key="",this.icon="",this.label="",this.repeater=new wt(()=>_t(this,this.key))}down(t){t.preventDefault();try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}this.repeater.start()}render(){return V`
       <button
         class="btn"
         aria-label=${this.label}

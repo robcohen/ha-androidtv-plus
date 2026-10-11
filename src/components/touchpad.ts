@@ -22,8 +22,12 @@ export class AtvTouchpad extends LitElement {
     this.pressed = true;
     this.moved = false;
     this.originX = this.lastX = e.clientX;
-    this.originY = this.lastY = e.clientY;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    this.originY =     this.lastY = e.clientY;
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      /* pointer already gone; the gesture still works */
+    }
   }
 
   private onMove(e: PointerEvent) {
