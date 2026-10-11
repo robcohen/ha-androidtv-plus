@@ -64,14 +64,25 @@ export class AtvDpad extends LitElement {
   }
 
   static styles = css`
+    :host {
+      display: block;
+    }
     .pad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
-      gap: 6px;
-      width: min(100%, 232px);
+      gap: 4px;
+      width: 244px;
+      max-width: 100%;
       aspect-ratio: 1;
       margin: 0 auto;
+      padding: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 28%, var(--atv-surface-2), var(--atv-surface) 74%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 -10px 26px -14px rgba(0, 0, 0, 0.5),
+        0 12px 26px -18px rgba(0, 0, 0, 0.7);
     }
     .btn {
       display: flex;
@@ -80,28 +91,53 @@ export class AtvDpad extends LitElement {
       border: none;
       border-radius: 50%;
       cursor: pointer;
-      color: var(--primary-text-color);
-      background: var(--secondary-background-color, rgba(127, 127, 127, 0.15));
+      color: var(--atv-text-dim);
+      background: transparent;
       transition:
         background 120ms ease,
-        transform 80ms ease;
+        color 120ms ease,
+        transform 90ms ease;
       touch-action: none;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
     .btn:hover {
-      background: var(--divider-color, rgba(127, 127, 127, 0.3));
+      background: var(--atv-surface-2);
+      color: var(--atv-text);
     }
     .btn:active {
-      transform: scale(0.94);
-      background: var(--primary-color);
-      color: var(--text-primary-color, #fff);
+      background: var(--atv-accent);
+      color: var(--atv-on-accent);
+      transform: scale(0.9);
     }
     .btn ha-icon {
       --mdc-icon-size: 30px;
     }
+    .btn[data-key='DPAD_CENTER'] {
+      margin: 6px;
+      color: var(--atv-on-accent);
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--atv-accent) 78%, #ffffff 22%),
+        var(--atv-accent)
+      );
+      box-shadow:
+        0 8px 18px -10px var(--atv-accent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .btn[data-key='DPAD_CENTER']:hover {
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--atv-accent) 70%, #ffffff 30%),
+        var(--atv-accent)
+      );
+      filter: brightness(1.04);
+    }
+    .btn[data-key='DPAD_CENTER']:active {
+      transform: scale(0.92);
+    }
     .btn[data-key='DPAD_CENTER'] ha-icon {
-      --mdc-icon-size: 44px;
+      --mdc-icon-size: 40px;
     }
   `;
 }

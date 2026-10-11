@@ -11,7 +11,9 @@ export interface TextEventDetail {
 }
 
 export interface ActivityEventDetail {
-  activity: string;
+  activity?: string;
+  service?: string;
+  data?: Record<string, unknown>;
 }
 
 function fire(el: HTMLElement, type: string, detail: unknown): void {
@@ -24,5 +26,9 @@ export const fireKey = (el: HTMLElement, key: string): void =>
 export const fireText = (el: HTMLElement, text: string): void =>
   fire(el, ATV_TEXT_EVENT, { text } satisfies TextEventDetail);
 
-export const fireActivity = (el: HTMLElement, activity: string): void =>
-  fire(el, ATV_ACTIVITY_EVENT, { activity } satisfies ActivityEventDetail);
+export const fireActivity = (el: HTMLElement, app: ActivityEventDetail): void =>
+  fire(el, ATV_ACTIVITY_EVENT, {
+    activity: app.activity,
+    service: app.service,
+    data: app.data,
+  } satisfies ActivityEventDetail);
