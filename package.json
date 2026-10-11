@@ -1,6 +1,6 @@
 {
   "name": "ha-androidtv-plus",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A polished Home Assistant Lovelace remote card for Android TV, with a d-pad and a gesture touch surface.",
   "type": "module",
   "module": "dist/androidtv-plus-card.js",

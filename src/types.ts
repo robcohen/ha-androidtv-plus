@@ -29,29 +29,35 @@ export interface AndroidTVPlusApp {
 
 /**
  * A selectable TV. Either a bare `remote.*` entity id, or an object with
- * per-TV companions (name, media player, IME sensor) so the card's extras can
+ * per-TV settings (name, media player, apps, text mode) so the card's extras
  * follow the selected TV.
  */
-export type AndroidTVPlusEntity =
-  | string
-  | {
-      entity: string;
-      name?: string;
-      media_player?: string;
-      ime_entity?: string;
-    };
+export interface AndroidTVPlusTarget {
+  /** `remote.*` entity id. */
+  entity: string;
+  /** Label shown in the picker. Defaults to the entity's friendly name. */
+  name?: string;
+  /** `media_player.*` for this TV; derived from the entity name if omitted. */
+  media_player?: string;
+  /** App tiles for this TV, overriding the card-level `apps`. */
+  apps?: AndroidTVPlusApp[];
+  /** Text delivery mode for this TV, overriding the card-level `text_mode`. */
+  text_mode?: TextMode;
+}
+
+export type AndroidTVPlusEntity = string | AndroidTVPlusTarget;
 
 export interface AndroidTVPlusCardConfig extends LovelaceCardConfig {
-  /** `remote.*` entity from the androidtv_remote integration. */
+  /** `remote.*` entity from the androidtv_remote integration (the default TV). */
   entity: string;
   /**
    * Extra TVs offered in the header selector, in addition to `entity`. When
    * more than one TV is configured, the title becomes a dropdown. Each entry
-   * may carry its own `media_player` / `ime_entity` so the status line, volume
-   * and keyboard follow the selected TV.
+   * may carry its own `media_player`, `apps` and `text_mode` so the status
+   * line, tiles and keyboard follow the selected TV.
    */
   entities?: AndroidTVPlusEntity[];
-  /** Optional `media_player.*` entity, used to show the active app / volume. */
+  /** Optional `media_player.*` entity for the default TV. */
   media_player?: string;
   /** Card title. Defaults to the remote entity's friendly name. */
   name?: string;
@@ -75,13 +81,6 @@ export interface AndroidTVPlusCardConfig extends LovelaceCardConfig {
    * edit; for those, set `replace` and the card sends the full string each time.
    */
   text_mode?: TextMode;
-  /**
-   * Optional `binary_sensor.*` that is `on` while the TV has a text field open
-   * (e.g. `binary_sensor.tv_ime` from the androidtv_ime companion integration).
-   * When set, the keyboard opens automatically while a field is focused, and
-   * its `text` attribute is mirrored into the input.
-   */
-  ime_entity?: string;
   /** Vibrate on key press on supported devices. Defaults to true. */
   haptic_feedback?: boolean;
 }

@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import type { HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
 import { EDITOR_TAG } from './const';
 import type { AndroidTVPlusApp, AndroidTVPlusCardConfig, AndroidTVPlusEntity, RemoteMode, TextMode } from './types';
+import { discoverRemotes } from './targets';
 
 type ToggleKey = 'show_power' | 'show_volume' | 'show_media' | 'show_keyboard' | 'haptic_feedback';
 
@@ -48,16 +49,11 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
 
   /** Every other `remote.*` entity in the system, plus any already-configured ones. */
   private get otherTvs(): string[] {
-    const primary = this.config.entity;
-    const configured = this.tvs.map((t) => t.entity);
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const e of [...configured, ...Object.keys(this.hass?.states ?? {})]) {
-      if (!e.startsWith('remote.') || e === primary || seen.has(e)) continue;
-      seen.add(e);
-      out.push(e);
-    }
-    return out.sort((a, b) => this.friendlyName(a).localeCompare(this.friendlyName(b)));
+    return discoverRemotes(
+      this.config.entity,
+      this.tvs.map((t) => t.entity),
+      Object.keys(this.hass?.states ?? {}),
+    ).sort((a, b) => this.friendlyName(a).localeCompare(this.friendlyName(b)));
   }
 
   private friendlyName(entity: string): string {
@@ -77,42 +73,63 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
   }
 
   private setTvName(entity: string, name: string): void {
-    this.setTvs(
-      this.tvs.map((t) => (t.entity === entity ? { ...t, name: name || undefined } : t)),
-    );
+    this.patchTv(entity, { name: name || undefined });
   }
 
-  private setApps(apps: AndroidTVPlusApp[]): void {
-    this.patch({ apps });
+  private patchTv(entity: string, changes: Partial<Exclude<AndroidTVPlusEntity, string>>): void {
+    this.setTvs(this.tvs.map((t) => (t.entity === entity ? { ...t, ...changes } : t)));
   }
 
-  private updateApp(index: number, changes: Partial<AndroidTVPlusApp>): void {
-    const apps = this.apps.map((app, i) => (i === index ? { ...app, ...changes } : app));
-    this.setApps(apps);
+  private tvTextMode(entity: string): TextMode {
+    return this.tvs.find((t) => t.entity === entity)?.text_mode ?? this.config.text_mode ?? 'append';
   }
 
-  private addApp(): void {
-    this.setApps([...this.apps, { name: '', icon: 'mdi:apps', activity: '' }]);
+  private setTvTextMode(entity: string, mode: TextMode): void {
+    this.patchTv(entity, { text_mode: mode });
   }
 
-  private removeApp(index: number): void {
-    this.setApps(this.apps.filter((_, i) => i !== index));
+  /** App list for a slot: `null` is the card-level default, else a TV entity. */
+  private appsFor(slot: string | null): AndroidTVPlusApp[] {
+    if (slot === null) return this.apps;
+    return this.tvs.find((t) => t.entity === slot)?.apps ?? [];
   }
 
-  private moveApp(index: number, delta: number): void {
-    const apps = [...this.apps];
+  private setAppsFor(slot: string | null, apps: AndroidTVPlusApp[]): void {
+    if (slot === null) {
+      this.patch({ apps });
+      return;
+    }
+    this.patchTv(slot, { apps: apps.length ? apps : undefined });
+  }
+
+  private updateApp(slot: string | null, index: number, changes: Partial<AndroidTVPlusApp>): void {
+    const apps = this.appsFor(slot).map((app, i) => (i === index ? { ...app, ...changes } : app));
+    this.setAppsFor(slot, apps);
+  }
+
+  private addApp(slot: string | null): void {
+    this.setAppsFor(slot, [...this.appsFor(slot), { name: '', icon: 'mdi:apps', activity: '' }]);
+  }
+
+  private removeApp(slot: string | null, index: number): void {
+    this.setAppsFor(slot, this.appsFor(slot).filter((_, i) => i !== index));
+  }
+
+  private moveApp(slot: string | null, index: number, delta: number): void {
+    const apps = [...this.appsFor(slot)];
     const target = index + delta;
     if (target < 0 || target >= apps.length) return;
     [apps[index], apps[target]] = [apps[target], apps[index]];
-    this.setApps(apps);
+    this.setAppsFor(slot, apps);
   }
 
-  private setKind(index: number, kind: 'activity' | 'service'): void {
-    const app = this.apps[index];
+  private setKind(slot: string | null, index: number, kind: 'activity' | 'service'): void {
+    const app = this.appsFor(slot)[index];
     if (!app) return;
     if (kind === 'service' && app.service !== undefined) return;
     if (kind === 'activity' && app.service === undefined) return;
     this.updateApp(
+      slot,
       index,
       kind === 'service'
         ? { service: '', activity: undefined, data: undefined }
@@ -120,25 +137,25 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
     );
   }
 
-  private renderApp(app: AndroidTVPlusApp, index: number) {
+  private renderApp(slot: string | null, app: AndroidTVPlusApp, index: number) {
     const isService = app.service !== undefined;
     return html`
       <div class="app">
         <div class="app-head">
           <ha-icon icon=${app.icon || 'mdi:apps'}></ha-icon>
           <span class="app-name">${app.name || 'Untitled'}</span>
-          <button class="icon-btn" title="Move up" ?disabled=${index === 0} @click=${() => this.moveApp(index, -1)}>
+          <button class="icon-btn" title="Move up" ?disabled=${index === 0} @click=${() => this.moveApp(slot, index, -1)}>
             <ha-icon icon="mdi:arrow-up"></ha-icon>
           </button>
           <button
             class="icon-btn"
             title="Move down"
-            ?disabled=${index === this.apps.length - 1}
-            @click=${() => this.moveApp(index, 1)}
+            ?disabled=${index === this.appsFor(slot).length - 1}
+            @click=${() => this.moveApp(slot, index, 1)}
           >
             <ha-icon icon="mdi:arrow-down"></ha-icon>
           </button>
-          <button class="icon-btn danger" title="Remove" @click=${() => this.removeApp(index)}>
+          <button class="icon-btn danger" title="Remove" @click=${() => this.removeApp(slot, index)}>
             <ha-icon icon="mdi:delete-outline"></ha-icon>
           </button>
         </div>
@@ -146,14 +163,14 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
         <ha-textfield
           label="Name"
           .value=${app.name ?? ''}
-          @change=${(e: Event) => this.updateApp(index, { name: (e.target as HTMLInputElement).value })}
+          @change=${(e: Event) => this.updateApp(slot, index, { name: (e.target as HTMLInputElement).value })}
         ></ha-textfield>
 
         <ha-icon-picker
           .hass=${this.hass}
           .value=${app.icon ?? ''}
           label="Icon"
-          @value-changed=${(e: CustomEvent) => this.updateApp(index, { icon: e.detail.value })}
+          @value-changed=${(e: CustomEvent) => this.updateApp(slot, index, { icon: e.detail.value })}
         ></ha-icon-picker>
 
         <div class="segmented small" role="radiogroup">
@@ -161,7 +178,7 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
             role="radio"
             aria-checked=${!isService}
             class=${!isService ? 'active' : ''}
-            @click=${() => this.setKind(index, 'activity')}
+            @click=${() => this.setKind(slot, index, 'activity')}
           >
             Activity / URL
           </button>
@@ -169,7 +186,7 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
             role="radio"
             aria-checked=${isService}
             class=${isService ? 'active' : ''}
-            @click=${() => this.setKind(index, 'service')}
+            @click=${() => this.setKind(slot, index, 'service')}
           >
             Service
           </button>
@@ -180,41 +197,59 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
               <ha-textfield
                 label="Service (e.g. script.tv_open_jellyfin)"
                 .value=${app.service ?? ''}
-                @change=${(e: Event) => this.updateApp(index, { service: (e.target as HTMLInputElement).value })}
+                @change=${(e: Event) => this.updateApp(slot, index, { service: (e.target as HTMLInputElement).value })}
               ></ha-textfield>
               <ha-textfield
                 label="Data (JSON, optional)"
                 .value=${app.data ? JSON.stringify(app.data) : ''}
-                @change=${(e: Event) => this.updateData(index, (e.target as HTMLInputElement).value)}
+                @change=${(e: Event) => this.updateData(slot, index, (e.target as HTMLInputElement).value)}
               ></ha-textfield>
             `
           : html`
               <ha-textfield
                 label="Activity / URL (e.g. netflix:// or https://…)"
                 .value=${app.activity ?? ''}
-                @change=${(e: Event) => this.updateApp(index, { activity: (e.target as HTMLInputElement).value })}
+                @change=${(e: Event) => this.updateApp(slot, index, { activity: (e.target as HTMLInputElement).value })}
               ></ha-textfield>
             `}
 
         <ha-textfield
           label="Package / app id (optional, for highlight)"
           .value=${app.package ?? ''}
-          @change=${(e: Event) => this.updateApp(index, { package: (e.target as HTMLInputElement).value || undefined })}
+          @change=${(e: Event) => this.updateApp(slot, index, { package: (e.target as HTMLInputElement).value || undefined })}
         ></ha-textfield>
       </div>
     `;
   }
 
-  private updateData(index: number, raw: string): void {
+  private renderAppsSection(slot: string | null, title: string, hint?: string) {
+    const apps = this.appsFor(slot);
+    return html`
+      <div class=${slot === null ? 'section' : 'apps-group'}>
+        <div class="section-head">
+          <span class="section-title">${title}</span>
+          <button class="add" @click=${() => this.addApp(slot)}>
+            <ha-icon icon="mdi:plus"></ha-icon>Add app
+          </button>
+        </div>
+        ${hint ? html`<p class="hint">${hint}</p>` : nothing}
+        ${apps.length
+          ? apps.map((app, i) => this.renderApp(slot, app, i))
+          : html`<p class="hint">No app tiles yet — add one to fill the app drawer.</p>`}
+      </div>
+    `;
+  }
+
+  private updateData(slot: string | null, index: number, raw: string): void {
     const text = raw.trim();
     if (!text) {
-      this.updateApp(index, { data: undefined });
+      this.updateApp(slot, index, { data: undefined });
       return;
     }
     try {
       const parsed = JSON.parse(text);
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        this.updateApp(index, { data: parsed as Record<string, unknown> });
+        this.updateApp(slot, index, { data: parsed as Record<string, unknown> });
       } else {
         throw new Error('expected an object');
       }
@@ -273,12 +308,36 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
                       ></ha-switch>
                     </ha-formfield>
                     ${included
-                      ? html`<ha-textfield
-                          label="Name (optional)"
-                          .value=${tv?.name ?? ''}
-                          @input=${(e: Event) =>
-                            this.setTvName(entity, (e.target as HTMLInputElement).value)}
-                        ></ha-textfield>`
+                      ? html`
+                          <ha-textfield
+                            label="Name (optional)"
+                            .value=${tv?.name ?? ''}
+                            @input=${(e: Event) =>
+                              this.setTvName(entity, (e.target as HTMLInputElement).value)}
+                          ></ha-textfield>
+                          <div class="field-group">
+                            <span class="group-label">Text input mode</span>
+                            <div class="segmented small" role="radiogroup">
+                              ${(['append', 'replace'] as TextMode[]).map(
+                                (t) => html`
+                                  <button
+                                    role="radio"
+                                    aria-checked=${this.tvTextMode(entity) === t}
+                                    class=${this.tvTextMode(entity) === t ? 'active' : ''}
+                                    @click=${() => this.setTvTextMode(entity, t)}
+                                  >
+                                    ${t === 'append' ? 'Insert' : 'Replace field'}
+                                  </button>
+                                `,
+                              )}
+                            </div>
+                          </div>
+                          ${this.renderAppsSection(
+                            entity,
+                            'Apps',
+                            'Overrides the default app list for this TV.',
+                          )}
+                        `
                       : nothing}
                   </div>
                 `;
@@ -339,17 +398,7 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
           </p>
         </div>
 
-        <div class="section">
-          <div class="section-head">
-            <span class="section-title">Apps</span>
-            <button class="add" @click=${() => this.addApp()}>
-              <ha-icon icon="mdi:plus"></ha-icon>Add app
-            </button>
-          </div>
-          ${this.apps.length
-            ? this.apps.map((app, i) => this.renderApp(app, i))
-            : html`<p class="hint">No app tiles yet — add one to fill the app drawer.</p>`}
-        </div>
+        ${this.renderAppsSection(null, 'Apps')}
       </div>
     `;
   }
@@ -403,6 +452,11 @@ export class AndroidTVPlusCardEditor extends LitElement implements LovelaceCardE
       gap: 12px;
       padding-top: 6px;
       border-top: 1px solid var(--divider-color, rgba(127, 127, 127, 0.4));
+    }
+    .apps-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .section-head {
       display: flex;

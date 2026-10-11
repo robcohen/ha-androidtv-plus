@@ -2,7 +2,8 @@ import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import type { HomeAssistant, LovelaceCard, LovelaceCardEditor } from 'custom-card-helpers';
 import { CARD_TAG, CARD_VERSION, EDITOR_TAG, KEYS } from './const';
-import type { AndroidTVPlusCardConfig, AndroidTVPlusEntity, RemoteMode } from './types';
+import type { AndroidTVPlusCardConfig, RemoteMode, TextMode } from './types';
+import { resolveTargets } from './targets';
 import {
   ATV_ACTIVITY_EVENT,
   ATV_KEY_EVENT,
@@ -36,6 +37,9 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
   @state() private volumeOpen = false;
   @state() private pickerOpen = false;
   @state() private activeEntity!: string;
+  @state() private tick = 0;
+
+  private progressTimer?: number;
 
   constructor() {
     super();
@@ -44,6 +48,27 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
     this.addEventListener(ATV_KEY_EVENT, this.onKey as EventListener);
     this.addEventListener(ATV_TEXT_EVENT, this.onText as EventListener);
     this.addEventListener(ATV_ACTIVITY_EVENT, this.onActivity as EventListener);
+  }
+
+  protected updated(): void {
+    // Tick once a second while something is playing so the progress bar
+    // advances without waiting for the media player to push a new state.
+    if (this.hasProgress && this.progressTimer === undefined) {
+      this.progressTimer = window.setInterval(() => {
+        this.tick++;
+      }, 1000);
+    } else if (!this.hasProgress && this.progressTimer !== undefined) {
+      window.clearInterval(this.progressTimer);
+      this.progressTimer = undefined;
+    }
+  }
+
+  public disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.progressTimer !== undefined) {
+      window.clearInterval(this.progressTimer);
+      this.progressTimer = undefined;
+    }
   }
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
@@ -102,7 +127,7 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
 
   public getCardSize(): number {
     let size = 9;
-    if (this.config?.apps?.length) size += 2;
+    if (this.apps?.length) size += 2;
     if (this.config?.show_keyboard) size += 1;
     return size;
   }
@@ -120,41 +145,27 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
   }
 
   /** Normalised list of selectable TVs: `entity` first, then `entities`, de-duped. */
-  private get targets(): {
-    entity: string;
-    name?: string;
-    media_player?: string;
-    ime_entity?: string;
-  }[] {
-    const cfg = this.config;
-    if (!cfg) return [];
-    const seen = new Set<string>();
-    const out: { entity: string; name?: string; media_player?: string; ime_entity?: string }[] = [];
-    for (const item of [cfg.entity, ...(cfg.entities ?? [])] as AndroidTVPlusEntity[]) {
-      const t =
-        typeof item === 'string'
-          ? { entity: item }
-          : {
-              entity: item.entity,
-              name: item.name,
-              media_player: item.media_player,
-              ime_entity: item.ime_entity,
-            };
-      if (!t.entity?.startsWith('remote.') || seen.has(t.entity)) continue;
-      seen.add(t.entity);
-      if (t.entity === cfg.entity) {
-        t.media_player ??= cfg.media_player;
-        t.ime_entity ??= cfg.ime_entity;
-      }
-      out.push(t);
-    }
-    return out;
+  private get targets() {
+    return this.config ? resolveTargets(this.config) : [];
   }
 
   /** The currently selected TV. */
   private get target() {
     const targets = this.targets;
     return targets.find((t) => t.entity === this.activeEntity) ?? targets[0];
+  }
+
+  /**
+   * App tiles for the selected TV: its own `apps` if set, else the card-level
+   * default. Lets a Roku and an Android TV each show their own channels.
+   */
+  private get apps() {
+    return this.target?.apps ?? this.config?.apps ?? [];
+  }
+
+  /** Text delivery mode for the selected TV: its own override or the default. */
+  private get textMode(): TextMode {
+    return this.target?.text_mode ?? this.config?.text_mode ?? 'append';
   }
 
   private nameFor(t: { entity: string; name?: string }): string {
@@ -220,7 +231,7 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
   private get activeAppName(): string | undefined {
     const fg = this.foregroundPackage;
     if (!fg) return undefined;
-    return this.config.apps?.find((app) => appMatches(app, fg))?.name || undefined;
+    return this.apps.find((app) => appMatches(app, fg))?.name || undefined;
   }
 
   /** Strip google/android reverse-DNS prefixes and prettify a known app id. */
@@ -251,7 +262,11 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
   }
 
   /** Now-playing line for the strip, from the media player. */
-  private get nowPlaying(): { primary: string; secondary?: string } | null {
+  private get nowPlaying(): {
+    primary: string;
+    secondary?: string;
+    progress?: number;
+  } | null {
     const media = this.mediaState;
     if (!media || media.state === 'off' || media.state === 'unavailable') return null;
     const title = typeof media.attributes.media_title === 'string' ? media.attributes.media_title : '';
@@ -264,7 +279,43 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
     const primary = title || app;
     if (!primary) return null;
     const secondary = title ? artist || app : '';
-    return { primary, secondary: secondary || undefined };
+    return {
+      primary,
+      secondary: secondary || undefined,
+      progress: this.mediaProgress(media),
+    };
+  }
+
+  /**
+   * Playback position as a fraction 0–1, extrapolated from the last update so
+   * the bar advances while playing without waiting for a new state push.
+   * Returns undefined when the media player reports no usable duration.
+   */
+  private mediaProgress(media: NonNullable<typeof this.mediaState>): number | undefined {
+    void this.tick;
+    const duration = media.attributes.media_duration;
+    let position = media.attributes.media_position;
+    if (typeof duration !== 'number' || duration <= 0 || typeof position !== 'number') {
+      return undefined;
+    }
+    if (media.state === 'playing') {
+      const updated = media.attributes.media_position_updated_at;
+      const epoch = typeof updated === 'string' ? Date.parse(updated) : NaN;
+      if (!Number.isNaN(epoch)) {
+        position += Math.max(0, (Date.now() - epoch) / 1000);
+      }
+    }
+    return Math.min(1, Math.max(0, position / duration));
+  }
+
+  /** True while a track is playing with a known duration (so the bar animates). */
+  private get hasProgress(): boolean {
+    const media = this.mediaState;
+    return (
+      media?.state === 'playing' &&
+      typeof media.attributes.media_duration === 'number' &&
+      typeof media.attributes.media_position === 'number'
+    );
   }
 
   private get statusKind(): 'on' | 'off' | 'offline' {
@@ -273,29 +324,8 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
     return this.isOn ? 'on' : 'off';
   }
 
-  private get imeState() {
-    const ime = this.target?.ime_entity;
-    return ime ? this.hass?.states[ime] : undefined;
-  }
-
-  /** True while the TV reports a focused text field (via `ime_entity`). */
-  private get imeOpen(): boolean {
-    return this.imeState?.state === 'on';
-  }
-
-  /** Field contents reported by the TV, mirrored into the keyboard input. */
-  private get imeText(): string | undefined {
-    const text = this.imeState?.attributes?.text;
-    return typeof text === 'string' && text.length ? text : undefined;
-  }
-
-  /** True when the keyboard is active — opened by the user or auto-shown by the TV. */
-  private get keyboardActive(): boolean {
-    return this.keyboardOpen || this.imeOpen;
-  }
-
   private get keyboardVisible(): boolean {
-    return !!this.config?.show_keyboard && this.keyboardActive;
+    return !!this.config?.show_keyboard && this.keyboardOpen;
   }
 
   private vibrate(): void {
@@ -460,7 +490,7 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
       <div class="secondary">
         <atv-repeat-button stretch .key=${KEYS.menu} icon="mdi:menu" label="Menu" small></atv-repeat-button>
         <atv-repeat-button stretch .key=${KEYS.search} icon="mdi:magnify" label="Search" small></atv-repeat-button>
-        ${this.config.apps?.length
+        ${this.apps.length
           ? html`<button
               class="round small grow ${this.appsOpen ? 'on' : ''}"
               aria-label="Apps"
@@ -537,7 +567,7 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
           <div class="navrow">
             ${this.config.show_keyboard
               ? html`<button
-                  class="round lead ${this.keyboardActive ? 'on' : 'dim'}"
+                  class="round lead ${this.keyboardOpen ? 'on' : 'dim'}"
                   aria-label="Keyboard"
                   title="Keyboard"
                   @click=${() => {
@@ -572,7 +602,7 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
 
           ${this.keyboardVisible
             ? html`<div class="kbd-inline">
-                <atv-keyboard .mirror=${this.imeText} .mode=${this.config.text_mode ?? 'append'}></atv-keyboard>
+                <atv-keyboard .mode=${this.textMode}></atv-keyboard>
               </div>`
             : nothing}
 
@@ -580,13 +610,25 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
 
           ${this.nowPlaying
             ? html`<div class="nowplaying">
-                <ha-icon icon="mdi:play-circle-outline"></ha-icon>
-                <div class="np-meta">
-                  <span class="np-title">${this.nowPlaying.primary}</span>
-                  ${this.nowPlaying.secondary
-                    ? html`<span class="np-sub">${this.nowPlaying.secondary}</span>`
-                    : nothing}
+                <div class="np-main">
+                  <ha-icon icon="mdi:play-circle-outline"></ha-icon>
+                  <div class="np-meta">
+                    <span class="np-title">${this.nowPlaying.primary}</span>
+                    ${this.nowPlaying.secondary
+                      ? html`<span class="np-sub">${this.nowPlaying.secondary}</span>`
+                      : nothing}
+                  </div>
                 </div>
+                ${typeof this.nowPlaying.progress === 'number'
+                  ? html`<div class="np-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow=${Math.round(
+                      this.nowPlaying.progress * 100,
+                    )}>
+                      <div
+                        class="np-bar-fill"
+                        style="width: ${(this.nowPlaying.progress * 100).toFixed(1)}%"
+                      ></div>
+                    </div>`
+                  : nothing}
               </div>`
             : nothing}
 
@@ -612,11 +654,11 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
             </div>
           </div>`
         : nothing}
-      ${this.appsOpen && this.config.apps?.length
+      ${this.appsOpen && this.apps.length
         ? html`<div class="drawer" @click=${this.onDrawerClick}>
             <div class="sheet" role="dialog" aria-label="Apps">
               <div class="handle"></div>
-              <atv-app-grid .apps=${this.config.apps} .foreground=${this.foregroundPackage}></atv-app-grid>
+              <atv-app-grid .apps=${this.apps} .foreground=${this.foregroundPackage}></atv-app-grid>
             </div>
           </div>`
         : nothing}
@@ -882,13 +924,19 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
     }
     .nowplaying {
       display: flex;
-      align-items: center;
-      gap: 9px;
+      flex-direction: column;
+      gap: 7px;
       min-width: 0;
       padding: 8px 12px;
       border-radius: 12px;
       color: var(--atv-text-dim);
       background: var(--atv-surface-2);
+    }
+    .np-main {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
     }
     .nowplaying ha-icon {
       --mdc-icon-size: 18px;
@@ -898,6 +946,18 @@ export class AndroidTVPlusCard extends LitElement implements LovelaceCard {
       display: flex;
       flex-direction: column;
       min-width: 0;
+    }
+    .np-bar {
+      height: 3px;
+      border-radius: 2px;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--atv-text-dim) 25%, transparent);
+    }
+    .np-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--atv-accent);
+      transition: width 1s linear;
     }
     .np-title {
       font-size: 12.5px;

@@ -19,12 +19,6 @@ import { fireKey, fireText } from './events';
  */
 @customElement('atv-keyboard')
 export class AtvKeyboard extends LitElement {
-  /**
-   * When set, the input mirrors this value (e.g. an on-screen field read from
-   * the TV once the backend exposes it). User typing otherwise owns the field.
-   */
-  @property({ type: String }) mirror?: string;
-
   /** How the TV applies text edits. */
   @property({ type: String }) mode: TextMode = 'append';
 
@@ -32,14 +26,6 @@ export class AtvKeyboard extends LitElement {
 
   /** The last value we have already sent to the TV. */
   private sent = '';
-  private focused = false;
-
-  protected willUpdate(changed: Map<string, unknown>) {
-    if (changed.has('mirror') && this.mirror !== undefined && !this.focused) {
-      this.value = this.mirror;
-      this.sent = this.mirror;
-    }
-  }
 
   private onInput(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -78,8 +64,6 @@ export class AtvKeyboard extends LitElement {
           autocapitalize="off"
           spellcheck="false"
           @input=${this.onInput}
-          @focus=${() => (this.focused = true)}
-          @blur=${() => (this.focused = false)}
         />
         <div class="keys">
           <button type="button" class="iconbtn" aria-label="Clear" @click=${() => this.clearField()}>

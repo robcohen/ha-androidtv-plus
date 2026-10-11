@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Android TV Plus - dev harness</title>
+    <style>
+      :root {
+        --primary-color: #4285f4;
+        --primary-text-color: #e8eaed;
+        --secondary-text-color: #9aa0a6;
+        --card-background-color: #1e1f22;
+        --secondary-background-color: rgba(255, 255, 255, 0.08);
+        --divider-color: rgba(255, 255, 255, 0.16);
+      }
+      body {
+        margin: 0;
+        background: #121212;
+        font-family: system-ui, sans-serif;
+      }
+      #app {
+        max-width: 360px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+      #log {
+        margin: 0;
+        padding: 12px 24px 40px;
+        color: #7bd88f;
+        font: 12px/1.5 ui-monospace, monospace;
+        white-space: pre-wrap;
+      }
+    </style>
+    <script>
+      // Minimal stand-ins for HA-provided elements so the card renders offline.
+      if (!customElements.get('ha-card')) {
+        customElements.define(
+          'ha-card',
+          class extends HTMLElement {
+            connectedCallback() {
+              this.style.display = 'block';
+              this.style.background = 'var(--card-background-color)';
+              this.style.borderRadius = '16px';
+            }
+          },
+        );
+      }
+      if (!customElements.get('ha-icon')) {
+        customElements.define(
+          'ha-icon',
+          class extends HTMLElement {
+            static get observedAttributes() {
+              return ['icon'];
+            }
+            attributeChangedCallback() {
+              this.textContent = (this.getAttribute('icon') || '').replace('mdi:', '');
+              this.style.fontSize = '11px';
+              this.style.opacity = '0.85';
+            }
+          },
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <pre id="log"></pre>
+    <script type="module">
+      const TOKEN = localStorage.getItem('llat') || '';
+      // Empty = same origin (real HA). Set to a forwarder URL when the page is
+      // served from a path that cannot reach the API directly.
+      const BASE = localStorage.getItem('ha_base') || '';
+      const logEl = document.getElementById('log');
+      window.__calls = [];
+      window.__ready = false;
+      const log = (m) => {
+        logEl.textContent += m + '\n';
+      };
+
+      const api = (path, opts = {}) =>
+        fetch(BASE + path, {
+          ...opts,
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+            ...(opts.headers || {}),
+          },
+        });
+
+      const hass = {
+        states: {},
+        callService(domain, service, data, target) {
+          const entity_id = Array.isArray(target) ? target : target && target.entity_id;
+          window.__calls.push({ domain, service, data, entity_id });
+          log(`callService ${domain}.${service} ${JSON.stringify(data)} -> ${JSON.stringify(entity_id)}`);
+          return api(`/api/services/${domain}/${service}`, {
+            method: 'POST',
+            body: JSON.stringify({ ...data, entity_id }),
+          }).then((r) => {
+            log(`  HTTP ${r.status}`);
+            return r.text();
+          });
+        },
+      };
+      window.__hass = () => hass;
+
+      async function refresh() {
+        const r = await api('/api/states');
+        if (r.ok) {
+          hass.states = {};
+          for (const s of await r.json()) hass.states[s.entity_id] = s;
+        }
+        const card = document.querySelector('androidtv-plus-card');
+        if (card) card.hass = Object.assign(Object.create(Object.getPrototypeOf(hass)), hass);
+      }
+
+      // Cache-busted so a redeploy is picked up without clearing the browser.
+      await import(`/local/community/ha-androidtv-plus/androidtv-plus-card.js?v=${Date.now()}`);
+
+      customElements.whenDefined('androidtv-plus-card').then(async () => {
+        const card = document.createElement('androidtv-plus-card');
+        card.setConfig({
+          type: 'custom:androidtv-plus-card',
+          entity: 'remote.living_room_tv',
+          mode: 'both',
+          apps: [
+            { name: 'YouTube', icon: 'mdi:youtube', activity: 'https://www.youtube.com' },
+            { name: 'Netflix', icon: 'mdi:netflix', activity: 'netflix://' },
+          ],
+        });
+        document.getElementById('app').appendChild(card);
+        window.__card = card;
+        await refresh();
+        setInterval(refresh, 3000);
+        window.__ready = true;
+        log('harness ready');
+      });
+    </script>
+  </body>
+</html>

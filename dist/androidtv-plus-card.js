@@ -1,4 +1,4 @@
-const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),a=new WeakMap;let s=class{constructor(t,e,a){if(this._$cssResult$=!0,a!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const i=this.t;if(e&&void 0===t){const e=void 0!==i&&1===i.length;e&&(t=a.get(i)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&a.set(i,t))}return t}toString(){return this.cssText}};const r=(t,...e)=>{const a=1===t.length?t[0]:e.reduce((e,i,a)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[a+1],t[0]);return new s(a,t,i)},o=e?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new s("string"==typeof t?t:t+"",void 0,i))(e)})(t):t,{is:n,defineProperty:c,getOwnPropertyDescriptor:l,getOwnPropertyNames:p,getOwnPropertySymbols:d,getPrototypeOf:h}=Object,u=globalThis,v=u.trustedTypes,m=v?v.emptyScript:"",f=u.reactiveElementPolyfillSupport,g=(t,e)=>t,b={toAttribute(t,e){switch(e){case Boolean:t=t?m:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},x=(t,e)=>!n(t,e),y={attribute:!0,type:String,converter:b,reflect:!1,useDefault:!1,hasChanged:x};Symbol.metadata??=Symbol("metadata"),u.litPropertyMetadata??=new WeakMap;let $=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=y){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),a=this.getPropertyDescriptor(t,i,e);void 0!==a&&c(this.prototype,t,a)}}static getPropertyDescriptor(t,e,i){const{get:a,set:s}=l(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:a,set(e){const r=a?.call(this);s?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??y}static _$Ei(){if(this.hasOwnProperty(g("elementProperties")))return;const t=h(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(g("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(g("properties"))){const t=this.properties,e=[...p(t),...d(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(o(t))}else void 0!==t&&e.push(o(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,a)=>{if(e)i.adoptedStyleSheets=a.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of a){const a=document.createElement("style"),s=t.litNonce;void 0!==s&&a.setAttribute("nonce",s),a.textContent=e.cssText,i.appendChild(a)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),a=this.constructor._$Eu(t,i);if(void 0!==a&&!0===i.reflect){const s=(void 0!==i.converter?.toAttribute?i.converter:b).toAttribute(e,i.type);this._$Em=t,null==s?this.removeAttribute(a):this.setAttribute(a,s),this._$Em=null}}_$AK(t,e){const i=this.constructor,a=i._$Eh.get(t);if(void 0!==a&&this._$Em!==a){const t=i.getPropertyOptions(a),s="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:b;this._$Em=a;const r=s.fromAttribute(e,t.type);this[a]=r??this._$Ej?.get(a)??r,this._$Em=null}}requestUpdate(t,e,i,a=!1,s){if(void 0!==t){const r=this.constructor;if(!1===a&&(s=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??x)(s,e)||i.useDefault&&i.reflect&&s===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:a,wrapped:s},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==s||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===a&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,a=this[e];!0!==t||this._$AL.has(e)||void 0===a||this.C(e,void 0,i,a)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};$.elementStyles=[],$.shadowRootOptions={mode:"open"},$[g("elementProperties")]=new Map,$[g("finalized")]=new Map,f?.({ReactiveElement:$}),(u.reactiveElementVersions??=[]).push("2.1.2");const w=globalThis,k=t=>t,_=w.trustedTypes,A=_?_.createPolicy("lit-html",{createHTML:t=>t}):void 0,E="$lit$",S=`lit$${Math.random().toFixed(9).slice(2)}$`,T="?"+S,O=`<${T}>`,P=document,C=()=>P.createComment(""),M=t=>null===t||"object"!=typeof t&&"function"!=typeof t,D=Array.isArray,R="[ \t\n\f\r]",U=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,z=/-->/g,j=/>/g,N=RegExp(`>|${R}(?:([^\\s"'>=/]+)(${R}*=${R}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),L=/'/g,H=/"/g,Y=/^(?:script|style|textarea|title)$/i,I=(t,...e)=>({_$litType$:1,strings:t,values:e}),K=Symbol.for("lit-noChange"),F=Symbol.for("lit-nothing"),X=new WeakMap,V=P.createTreeWalker(P,129);function W(t,e){if(!D(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==A?A.createHTML(e):e}const B=(t,e)=>{const i=t.length-1,a=[];let s,r=2===e?"<svg>":3===e?"<math>":"",o=U;for(let e=0;e<i;e++){const i=t[e];let n,c,l=-1,p=0;for(;p<i.length&&(o.lastIndex=p,c=o.exec(i),null!==c);)p=o.lastIndex,o===U?"!--"===c[1]?o=z:void 0!==c[1]?o=j:void 0!==c[2]?(Y.test(c[2])&&(s=RegExp("</"+c[2],"g")),o=N):void 0!==c[3]&&(o=N):o===N?">"===c[0]?(o=s??U,l=-1):void 0===c[1]?l=-2:(l=o.lastIndex-c[2].length,n=c[1],o=void 0===c[3]?N:'"'===c[3]?H:L):o===H||o===L?o=N:o===z||o===j?o=U:(o=N,s=void 0);const d=o===N&&t[e+1].startsWith("/>")?" ":"";r+=o===U?i+O:l>=0?(a.push(n),i.slice(0,l)+E+i.slice(l)+S+d):i+S+(-2===l?e:d)}return[W(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),a]};class q{constructor({strings:t,_$litType$:e},i){let a;this.parts=[];let s=0,r=0;const o=t.length-1,n=this.parts,[c,l]=B(t,e);if(this.el=q.createElement(c,i),V.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(a=V.nextNode())&&n.length<o;){if(1===a.nodeType){if(a.hasAttributes())for(const t of a.getAttributeNames())if(t.endsWith(E)){const e=l[r++],i=a.getAttribute(t).split(S),o=/([.?@])?(.*)/.exec(e);n.push({type:1,index:s,name:o[2],strings:i,ctor:"."===o[1]?tt:"?"===o[1]?et:"@"===o[1]?it:Z}),a.removeAttribute(t)}else t.startsWith(S)&&(n.push({type:6,index:s}),a.removeAttribute(t));if(Y.test(a.tagName)){const t=a.textContent.split(S),e=t.length-1;if(e>0){a.textContent=_?_.emptyScript:"";for(let i=0;i<e;i++)a.append(t[i],C()),V.nextNode(),n.push({type:2,index:++s});a.append(t[e],C())}}}else if(8===a.nodeType)if(a.data===T)n.push({type:2,index:s});else{let t=-1;for(;-1!==(t=a.data.indexOf(S,t+1));)n.push({type:7,index:s}),t+=S.length-1}s++}}static createElement(t,e){const i=P.createElement("template");return i.innerHTML=t,i}}function Q(t,e,i=t,a){if(e===K)return e;let s=void 0!==a?i._$Co?.[a]:i._$Cl;const r=M(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),void 0===r?s=void 0:(s=new r(t),s._$AT(t,i,a)),void 0!==a?(i._$Co??=[])[a]=s:i._$Cl=s),void 0!==s&&(e=Q(t,s._$AS(t,e.values),s,a)),e}class J{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,a=(t?.creationScope??P).importNode(e,!0);V.currentNode=a;let s=V.nextNode(),r=0,o=0,n=i[0];for(;void 0!==n;){if(r===n.index){let e;2===n.type?e=new G(s,s.nextSibling,this,t):1===n.type?e=new n.ctor(s,n.name,n.strings,this,t):6===n.type&&(e=new at(s,this,t)),this._$AV.push(e),n=i[++o]}r!==n?.index&&(s=V.nextNode(),r++)}return V.currentNode=P,a}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class G{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,a){this.type=2,this._$AH=F,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=a,this._$Cv=a?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Q(this,t,e),M(t)?t===F||null==t||""===t?(this._$AH!==F&&this._$AR(),this._$AH=F):t!==this._$AH&&t!==K&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>D(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==F&&M(this._$AH)?this._$AA.nextSibling.data=t:this.T(P.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,a="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=q.createElement(W(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===a)this._$AH.p(e);else{const t=new J(a,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=X.get(t.strings);return void 0===e&&X.set(t.strings,e=new q(t)),e}k(t){D(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,a=0;for(const s of t)a===e.length?e.push(i=new G(this.O(C()),this.O(C()),this,this.options)):i=e[a],i._$AI(s),a++;a<e.length&&(this._$AR(i&&i._$AB.nextSibling,a),e.length=a)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=k(t).nextSibling;k(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class Z{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,a,s){this.type=1,this._$AH=F,this._$AN=void 0,this.element=t,this.name=e,this._$AM=a,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=F}_$AI(t,e=this,i,a){const s=this.strings;let r=!1;if(void 0===s)t=Q(this,t,e,0),r=!M(t)||t!==this._$AH&&t!==K,r&&(this._$AH=t);else{const a=t;let o,n;for(t=s[0],o=0;o<s.length-1;o++)n=Q(this,a[i+o],e,o),n===K&&(n=this._$AH[o]),r||=!M(n)||n!==this._$AH[o],n===F?t=F:t!==F&&(t+=(n??"")+s[o+1]),this._$AH[o]=n}r&&!a&&this.j(t)}j(t){t===F?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class tt extends Z{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===F?void 0:t}}class et extends Z{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==F)}}class it extends Z{constructor(t,e,i,a,s){super(t,e,i,a,s),this.type=5}_$AI(t,e=this){if((t=Q(this,t,e,0)??F)===K)return;const i=this._$AH,a=t===F&&i!==F||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,s=t!==F&&(i===F||a);a&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class at{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Q(this,t)}}const st=w.litHtmlPolyfillSupport;st?.(q,G),(w.litHtmlVersions??=[]).push("3.3.3");const rt=globalThis;class ot extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const a=i?.renderBefore??e;let s=a._$litPart$;if(void 0===s){const t=i?.renderBefore??null;a._$litPart$=s=new G(e.insertBefore(C(),t),t,void 0,i??{})}return s._$AI(t),s})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return K}}ot._$litElement$=!0,ot.finalized=!0,rt.litElementHydrateSupport?.({LitElement:ot});const nt=rt.litElementPolyfillSupport;nt?.({LitElement:ot}),(rt.litElementVersions??=[]).push("4.2.2");const ct=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)},lt={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:x},pt=(t=lt,e,i)=>{const{kind:a,metadata:s}=i;let r=globalThis.litPropertyMetadata.get(s);if(void 0===r&&globalThis.litPropertyMetadata.set(s,r=new Map),"setter"===a&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===a){const{name:a}=i;return{set(i){const s=e.get.call(this);e.set.call(this,i),this.requestUpdate(a,s,t,!0,i)},init(e){return void 0!==e&&this.C(a,void 0,t,e),e}}}if("setter"===a){const{name:a}=i;return function(i){const s=this[a];e.call(this,i),this.requestUpdate(a,s,t,!0,i)}}throw Error("Unsupported decorator location: "+a)};function dt(t){return(e,i)=>"object"==typeof i?pt(t,e,i):((t,e,i)=>{const a=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),a?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}function ht(t){return dt({...t,state:!0,attribute:!1})}function ut(t,e){return(e,i,a)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Reflect.decorate&&"object"!=typeof e&&Object.defineProperty(t,e,i),i))(e,i,{get(){return(e=>e.renderRoot?.querySelector(t)??null)(this)}})}const vt="androidtv-plus-card",mt="androidtv-plus-card-editor",ft="DPAD_UP",gt="DPAD_DOWN",bt="DPAD_LEFT",xt="DPAD_RIGHT",yt="DPAD_CENTER",$t="atv-key",wt="atv-text",kt="atv-activity";function _t(t,e,i){t.dispatchEvent(new CustomEvent(e,{detail:i,bubbles:!0,composed:!0}))}const At=(t,e)=>_t(t,$t,{key:e}),Et=(t,e)=>_t(t,wt,{text:e});class St{constructor(t){this.onFire=t}start(){this.stop(),this.onFire(),this.timeout=window.setTimeout(()=>{this.interval=window.setInterval(()=>this.onFire(),150)},450)}stop(){void 0!==this.timeout&&(clearTimeout(this.timeout),this.timeout=void 0),void 0!==this.interval&&(clearInterval(this.interval),this.interval=void 0)}}Object.getOwnPropertyDescriptor;let Tt=class extends ot{constructor(){super(...arguments),this.repeater=new St(()=>{this.activeKey&&At(this,this.activeKey)})}press(t){this.activeKey=t,this.repeater.start()}release(){this.activeKey=void 0,this.repeater.stop()}button(t,e,i){return I`
+const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),a=new WeakMap;let s=class{constructor(t,e,a){if(this._$cssResult$=!0,a!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e}get styleSheet(){let t=this.o;const i=this.t;if(e&&void 0===t){const e=void 0!==i&&1===i.length;e&&(t=a.get(i)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&a.set(i,t))}return t}toString(){return this.cssText}};const r=(t,...e)=>{const a=1===t.length?t[0]:e.reduce((e,i,a)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+t[a+1],t[0]);return new s(a,t,i)},o=e?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const i of t.cssRules)e+=i.cssText;return(t=>new s("string"==typeof t?t:t+"",void 0,i))(e)})(t):t,{is:n,defineProperty:c,getOwnPropertyDescriptor:p,getOwnPropertyNames:l,getOwnPropertySymbols:d,getPrototypeOf:h}=Object,u=globalThis,v=u.trustedTypes,m=v?v.emptyScript:"",f=u.reactiveElementPolyfillSupport,g=(t,e)=>t,b={toAttribute(t,e){switch(e){case Boolean:t=t?m:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t)}return t},fromAttribute(t,e){let i=t;switch(e){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t)}catch(t){i=null}}return i}},x=(t,e)=>!n(t,e),y={attribute:!0,type:String,converter:b,reflect:!1,useDefault:!1,hasChanged:x};Symbol.metadata??=Symbol("metadata"),u.litPropertyMetadata??=new WeakMap;let $=class extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,e=y){if(e.state&&(e.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(t)&&((e=Object.create(e)).wrapped=!0),this.elementProperties.set(t,e),!e.noAccessor){const i=Symbol(),a=this.getPropertyDescriptor(t,i,e);void 0!==a&&c(this.prototype,t,a)}}static getPropertyDescriptor(t,e,i){const{get:a,set:s}=p(this.prototype,t)??{get(){return this[e]},set(t){this[e]=t}};return{get:a,set(e){const r=a?.call(this);s?.call(this,e),this.requestUpdate(t,r,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)??y}static _$Ei(){if(this.hasOwnProperty(g("elementProperties")))return;const t=h(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties)}static finalize(){if(this.hasOwnProperty(g("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(g("properties"))){const t=this.properties,e=[...l(t),...d(t)];for(const i of e)this.createProperty(i,t[i])}const t=this[Symbol.metadata];if(null!==t){const e=litPropertyMetadata.get(t);if(void 0!==e)for(const[t,i]of e)this.elementProperties.set(t,i)}this._$Eh=new Map;for(const[t,e]of this.elementProperties){const i=this._$Eu(t,e);void 0!==i&&this._$Eh.set(i,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(t){const e=[];if(Array.isArray(t)){const i=new Set(t.flat(1/0).reverse());for(const t of i)e.unshift(o(t))}else void 0!==t&&e.push(o(t));return e}static _$Eu(t,e){const i=e.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this))}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.()}removeController(t){this._$EO?.delete(t)}_$E_(){const t=new Map,e=this.constructor.elementProperties;for(const i of e.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t)}createRenderRoot(){const i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return((i,a)=>{if(e)i.adoptedStyleSheets=a.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of a){const a=document.createElement("style"),s=t.litNonce;void 0!==s&&a.setAttribute("nonce",s),a.textContent=e.cssText,i.appendChild(a)}})(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(t=>t.hostConnected?.())}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.())}attributeChangedCallback(t,e,i){this._$AK(t,i)}_$ET(t,e){const i=this.constructor.elementProperties.get(t),a=this.constructor._$Eu(t,i);if(void 0!==a&&!0===i.reflect){const s=(void 0!==i.converter?.toAttribute?i.converter:b).toAttribute(e,i.type);this._$Em=t,null==s?this.removeAttribute(a):this.setAttribute(a,s),this._$Em=null}}_$AK(t,e){const i=this.constructor,a=i._$Eh.get(t);if(void 0!==a&&this._$Em!==a){const t=i.getPropertyOptions(a),s="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:b;this._$Em=a;const r=s.fromAttribute(e,t.type);this[a]=r??this._$Ej?.get(a)??r,this._$Em=null}}requestUpdate(t,e,i,a=!1,s){if(void 0!==t){const r=this.constructor;if(!1===a&&(s=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??x)(s,e)||i.useDefault&&i.reflect&&s===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,e,i)}!1===this.isUpdatePending&&(this._$ES=this._$EP())}C(t,e,{useDefault:i,reflect:a,wrapped:s},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??e??this[t]),!0!==s||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(e=void 0),this._$AL.set(t,e)),!0===a&&this._$Em!==t&&(this._$Eq??=new Set).add(t))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,e]of this._$Ep)this[t]=e;this._$Ep=void 0}const t=this.constructor.elementProperties;if(t.size>0)for(const[e,i]of t){const{wrapped:t}=i,a=this[e];!0!==t||this._$AL.has(e)||void 0===a||this.C(e,void 0,i,a)}}let t=!1;const e=this._$AL;try{t=this.shouldUpdate(e),t?(this.willUpdate(e),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(e)):this._$EM()}catch(e){throw t=!1,this._$EM(),e}t&&this._$AE(e)}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return!0}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(t){}firstUpdated(t){}};$.elementStyles=[],$.shadowRootOptions={mode:"open"},$[g("elementProperties")]=new Map,$[g("finalized")]=new Map,f?.({ReactiveElement:$}),(u.reactiveElementVersions??=[]).push("2.1.2");const w=globalThis,k=t=>t,_=w.trustedTypes,A=_?_.createPolicy("lit-html",{createHTML:t=>t}):void 0,T="$lit$",E=`lit$${Math.random().toFixed(9).slice(2)}$`,S="?"+E,O=`<${S}>`,P=document,C=()=>P.createComment(""),M=t=>null===t||"object"!=typeof t&&"function"!=typeof t,D=Array.isArray,R="[ \t\n\f\r]",N=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,U=/-->/g,z=/>/g,j=RegExp(`>|${R}(?:([^\\s"'>=/]+)(${R}*=${R}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),L=/'/g,H=/"/g,Y=/^(?:script|style|textarea|title)$/i,F=(t,...e)=>({_$litType$:1,strings:t,values:e}),I=Symbol.for("lit-noChange"),K=Symbol.for("lit-nothing"),V=new WeakMap,X=P.createTreeWalker(P,129);function W(t,e){if(!D(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==A?A.createHTML(e):e}const B=(t,e)=>{const i=t.length-1,a=[];let s,r=2===e?"<svg>":3===e?"<math>":"",o=N;for(let e=0;e<i;e++){const i=t[e];let n,c,p=-1,l=0;for(;l<i.length&&(o.lastIndex=l,c=o.exec(i),null!==c);)l=o.lastIndex,o===N?"!--"===c[1]?o=U:void 0!==c[1]?o=z:void 0!==c[2]?(Y.test(c[2])&&(s=RegExp("</"+c[2],"g")),o=j):void 0!==c[3]&&(o=j):o===j?">"===c[0]?(o=s??N,p=-1):void 0===c[1]?p=-2:(p=o.lastIndex-c[2].length,n=c[1],o=void 0===c[3]?j:'"'===c[3]?H:L):o===H||o===L?o=j:o===U||o===z?o=N:(o=j,s=void 0);const d=o===j&&t[e+1].startsWith("/>")?" ":"";r+=o===N?i+O:p>=0?(a.push(n),i.slice(0,p)+T+i.slice(p)+E+d):i+E+(-2===p?e:d)}return[W(t,r+(t[i]||"<?>")+(2===e?"</svg>":3===e?"</math>":"")),a]};class q{constructor({strings:t,_$litType$:e},i){let a;this.parts=[];let s=0,r=0;const o=t.length-1,n=this.parts,[c,p]=B(t,e);if(this.el=q.createElement(c,i),X.currentNode=this.el.content,2===e||3===e){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(a=X.nextNode())&&n.length<o;){if(1===a.nodeType){if(a.hasAttributes())for(const t of a.getAttributeNames())if(t.endsWith(T)){const e=p[r++],i=a.getAttribute(t).split(E),o=/([.?@])?(.*)/.exec(e);n.push({type:1,index:s,name:o[2],strings:i,ctor:"."===o[1]?tt:"?"===o[1]?et:"@"===o[1]?it:Z}),a.removeAttribute(t)}else t.startsWith(E)&&(n.push({type:6,index:s}),a.removeAttribute(t));if(Y.test(a.tagName)){const t=a.textContent.split(E),e=t.length-1;if(e>0){a.textContent=_?_.emptyScript:"";for(let i=0;i<e;i++)a.append(t[i],C()),X.nextNode(),n.push({type:2,index:++s});a.append(t[e],C())}}}else if(8===a.nodeType)if(a.data===S)n.push({type:2,index:s});else{let t=-1;for(;-1!==(t=a.data.indexOf(E,t+1));)n.push({type:7,index:s}),t+=E.length-1}s++}}static createElement(t,e){const i=P.createElement("template");return i.innerHTML=t,i}}function Q(t,e,i=t,a){if(e===I)return e;let s=void 0!==a?i._$Co?.[a]:i._$Cl;const r=M(e)?void 0:e._$litDirective$;return s?.constructor!==r&&(s?._$AO?.(!1),void 0===r?s=void 0:(s=new r(t),s._$AT(t,i,a)),void 0!==a?(i._$Co??=[])[a]=s:i._$Cl=s),void 0!==s&&(e=Q(t,s._$AS(t,e.values),s,a)),e}class J{constructor(t,e){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=e}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:e},parts:i}=this._$AD,a=(t?.creationScope??P).importNode(e,!0);X.currentNode=a;let s=X.nextNode(),r=0,o=0,n=i[0];for(;void 0!==n;){if(r===n.index){let e;2===n.type?e=new G(s,s.nextSibling,this,t):1===n.type?e=new n.ctor(s,n.name,n.strings,this,t):6===n.type&&(e=new at(s,this,t)),this._$AV.push(e),n=i[++o]}r!==n?.index&&(s=X.nextNode(),r++)}return X.currentNode=P,a}p(t){let e=0;for(const i of this._$AV)void 0!==i&&(void 0!==i.strings?(i._$AI(t,i,e),e+=i.strings.length-2):i._$AI(t[e])),e++}}class G{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,e,i,a){this.type=2,this._$AH=K,this._$AN=void 0,this._$AA=t,this._$AB=e,this._$AM=i,this.options=a,this._$Cv=a?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const e=this._$AM;return void 0!==e&&11===t?.nodeType&&(t=e.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,e=this){t=Q(this,t,e),M(t)?t===K||null==t||""===t?(this._$AH!==K&&this._$AR(),this._$AH=K):t!==this._$AH&&t!==I&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):(t=>D(t)||"function"==typeof t?.[Symbol.iterator])(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==K&&M(this._$AH)?this._$AA.nextSibling.data=t:this.T(P.createTextNode(t)),this._$AH=t}$(t){const{values:e,_$litType$:i}=t,a="number"==typeof i?this._$AC(t):(void 0===i.el&&(i.el=q.createElement(W(i.h,i.h[0]),this.options)),i);if(this._$AH?._$AD===a)this._$AH.p(e);else{const t=new J(a,this),i=t.u(this.options);t.p(e),this.T(i),this._$AH=t}}_$AC(t){let e=V.get(t.strings);return void 0===e&&V.set(t.strings,e=new q(t)),e}k(t){D(this._$AH)||(this._$AH=[],this._$AR());const e=this._$AH;let i,a=0;for(const s of t)a===e.length?e.push(i=new G(this.O(C()),this.O(C()),this,this.options)):i=e[a],i._$AI(s),a++;a<e.length&&(this._$AR(i&&i._$AB.nextSibling,a),e.length=a)}_$AR(t=this._$AA.nextSibling,e){for(this._$AP?.(!1,!0,e);t!==this._$AB;){const e=k(t).nextSibling;k(t).remove(),t=e}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class Z{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,e,i,a,s){this.type=1,this._$AH=K,this._$AN=void 0,this.element=t,this.name=e,this._$AM=a,this.options=s,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=K}_$AI(t,e=this,i,a){const s=this.strings;let r=!1;if(void 0===s)t=Q(this,t,e,0),r=!M(t)||t!==this._$AH&&t!==I,r&&(this._$AH=t);else{const a=t;let o,n;for(t=s[0],o=0;o<s.length-1;o++)n=Q(this,a[i+o],e,o),n===I&&(n=this._$AH[o]),r||=!M(n)||n!==this._$AH[o],n===K?t=K:t!==K&&(t+=(n??"")+s[o+1]),this._$AH[o]=n}r&&!a&&this.j(t)}j(t){t===K?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class tt extends Z{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===K?void 0:t}}class et extends Z{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==K)}}class it extends Z{constructor(t,e,i,a,s){super(t,e,i,a,s),this.type=5}_$AI(t,e=this){if((t=Q(this,t,e,0)??K)===I)return;const i=this._$AH,a=t===K&&i!==K||t.capture!==i.capture||t.once!==i.once||t.passive!==i.passive,s=t!==K&&(i===K||a);a&&this.element.removeEventListener(this.name,this,i),s&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class at{constructor(t,e,i){this.element=t,this.type=6,this._$AN=void 0,this._$AM=e,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(t){Q(this,t)}}const st=w.litHtmlPolyfillSupport;st?.(q,G),(w.litHtmlVersions??=[]).push("3.3.3");const rt=globalThis;class ot extends ${constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const e=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=((t,e,i)=>{const a=i?.renderBefore??e;let s=a._$litPart$;if(void 0===s){const t=i?.renderBefore??null;a._$litPart$=s=new G(e.insertBefore(C(),t),t,void 0,i??{})}return s._$AI(t),s})(e,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return I}}ot._$litElement$=!0,ot.finalized=!0,rt.litElementHydrateSupport?.({LitElement:ot});const nt=rt.litElementPolyfillSupport;nt?.({LitElement:ot}),(rt.litElementVersions??=[]).push("4.2.2");const ct=t=>(e,i)=>{void 0!==i?i.addInitializer(()=>{customElements.define(t,e)}):customElements.define(t,e)},pt={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:x},lt=(t=pt,e,i)=>{const{kind:a,metadata:s}=i;let r=globalThis.litPropertyMetadata.get(s);if(void 0===r&&globalThis.litPropertyMetadata.set(s,r=new Map),"setter"===a&&((t=Object.create(t)).wrapped=!0),r.set(i.name,t),"accessor"===a){const{name:a}=i;return{set(i){const s=e.get.call(this);e.set.call(this,i),this.requestUpdate(a,s,t,!0,i)},init(e){return void 0!==e&&this.C(a,void 0,t,e),e}}}if("setter"===a){const{name:a}=i;return function(i){const s=this[a];e.call(this,i),this.requestUpdate(a,s,t,!0,i)}}throw Error("Unsupported decorator location: "+a)};function dt(t){return(e,i)=>"object"==typeof i?lt(t,e,i):((t,e,i)=>{const a=e.hasOwnProperty(i);return e.constructor.createProperty(i,t),a?Object.getOwnPropertyDescriptor(e,i):void 0})(t,e,i)}function ht(t){return dt({...t,state:!0,attribute:!1})}function ut(t,e){return(e,i,a)=>((t,e,i)=>(i.configurable=!0,i.enumerable=!0,Reflect.decorate&&"object"!=typeof e&&Object.defineProperty(t,e,i),i))(e,i,{get(){return(e=>e.renderRoot?.querySelector(t)??null)(this)}})}const vt="androidtv-plus-card",mt="androidtv-plus-card-editor",ft="DPAD_UP",gt="DPAD_DOWN",bt="DPAD_LEFT",xt="DPAD_RIGHT",yt="DPAD_CENTER",$t="atv-key",wt="atv-text",kt="atv-activity";function _t(t,e,i){t.dispatchEvent(new CustomEvent(e,{detail:i,bubbles:!0,composed:!0}))}const At=(t,e)=>_t(t,$t,{key:e}),Tt=(t,e)=>_t(t,wt,{text:e});class Et{constructor(t){this.onFire=t}start(){this.stop(),this.onFire(),this.timeout=window.setTimeout(()=>{this.interval=window.setInterval(()=>this.onFire(),150)},450)}stop(){void 0!==this.timeout&&(clearTimeout(this.timeout),this.timeout=void 0),void 0!==this.interval&&(clearInterval(this.interval),this.interval=void 0)}}Object.getOwnPropertyDescriptor;let St=class extends ot{constructor(){super(...arguments),this.repeater=new Et(()=>{this.activeKey&&At(this,this.activeKey)})}press(t){this.activeKey=t,this.repeater.start()}release(){this.activeKey=void 0,this.repeater.stop()}button(t,e,i){return F`
       <button
         class="btn"
         data-key=${t}
@@ -11,7 +11,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       >
         <ha-icon icon=${e}></ha-icon>
       </button>
-    `}render(){return I`
+    `}render(){return F`
       <div class="pad">
         <span></span>
         ${this.button(ft,"mdi:chevron-up","Up")}
@@ -23,7 +23,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
         ${this.button(gt,"mdi:chevron-down","Down")}
         <span></span>
       </div>
-    `}};Tt.styles=r`
+    `}};St.styles=r`
     :host {
       display: block;
     }
@@ -99,7 +99,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
     .btn[data-key='DPAD_CENTER'] ha-icon {
       --mdc-icon-size: 40px;
     }
-  `,Tt=((t,e)=>{for(var i,a=e,s=t.length-1;s>=0;s--)(i=t[s])&&(a=i(a)||a);return a})([ct("atv-dpad")],Tt);var Ot=Object.defineProperty,Pt=Object.getOwnPropertyDescriptor,Ct=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Pt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Ot(e,i,r),r};let Mt=class extends ot{constructor(){super(...arguments),this.pressed=!1,this.padDir=null,this.okFlash=!1,this.tap=null,this.tapId=0,this.originX=0,this.originY=0,this.lastX=0,this.lastY=0,this.originLX=0,this.originLY=0,this.moved=!1,this.centerX=0,this.centerY=0,this.maxR=0,this.pos={x:0,y:0},this.vel={x:0,y:0},this.target={x:0,y:0},this.lastT=0,this.raf=0,this.step=t=>{this.lastT||(this.lastT=t);let e=(t-this.lastT)/1e3;this.lastT=t,e=Math.min(e,.05);const i=-600*(this.pos.x-this.target.x)-34*this.vel.x,a=-600*(this.pos.y-this.target.y)-34*this.vel.y;if(this.vel.x+=i*e,this.vel.y+=a*e,this.pos.x+=this.vel.x*e,this.pos.y+=this.vel.y*e,this.applyKnob(),Math.abs(this.vel.x)<1.5&&Math.abs(this.vel.y)<1.5&&Math.abs(this.pos.x-this.target.x)<.3&&Math.abs(this.pos.y-this.target.y)<.3&&!this.pressed)return this.pos.x=this.target.x,this.pos.y=this.target.y,this.vel.x=0,this.vel.y=0,this.applyKnob(),void(this.raf=0);this.raf=requestAnimationFrame(this.step)},this.onClick=t=>{this.pressed=!0,this.moved=!1,this.originX=this.lastX=t.clientX,this.originY=this.lastY=t.clientY;const e=t.currentTarget.getBoundingClientRect();this.centerX=e.left+e.width/2,this.centerY=e.top+e.height/2,this.maxR=e.width/2*.66,this.originLX=t.clientX-e.left,this.originLY=t.clientY-e.top,this.setTarget(t.clientX,t.clientY),this.reduceMotion||this.startLoop();try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}}}get reduceMotion(){return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches??!1}disconnectedCallback(){super.disconnectedCallback(),cancelAnimationFrame(this.raf),clearTimeout(this.okTimer),clearTimeout(this.tapTimer)}clampToRadius(t,e){const i=Math.hypot(t,e);return i>this.maxR&&i>0?{x:t/i*this.maxR,y:e/i*this.maxR}:{x:t,y:e}}setTarget(t,e){const{x:i,y:a}=this.clampToRadius(t-this.centerX,e-this.centerY);this.target.x=i,this.target.y=a;const s=Math.hypot(i,a);this.padDir=this.pressed&&s>.5*this.maxR?Math.abs(i)>=Math.abs(a)?i>0?"right":"left":a>0?"down":"up":null,this.reduceMotion&&(this.pos.x=i,this.pos.y=a,this.vel.x=0,this.vel.y=0,this.applyKnob())}startLoop(){this.lastT=0,this.raf||(this.raf=requestAnimationFrame(this.step))}applyKnob(){const t=this.knobEl;if(!t)return;const e=Math.hypot(this.vel.x,this.vel.y),i=Math.max(-14,Math.min(14,.05*-this.vel.x)),a=1+Math.min(.12,9e-4*e);if(t.style.transform=`translate(${Math.round(this.pos.x)}px, ${Math.round(this.pos.y)}px) rotate(${i.toFixed(2)}deg) scale(${a.toFixed(3)})`,this.trailEl){const t=Math.max(-10,Math.min(10,.012*-this.vel.x)),i=Math.max(-10,Math.min(10,.012*-this.vel.y));this.trailEl.style.transform=`translate(${t.toFixed(1)}px, ${i.toFixed(1)}px)`,this.trailEl.style.opacity=String(Math.min(.5,e/2600))}}onMove(t){if(!this.pressed)return;this.setTarget(t.clientX,t.clientY);const e=t.clientX-this.lastX,i=t.clientY-this.lastY;if(Math.hypot(t.clientX-this.originX,t.clientY-this.originY)>18&&(this.moved=!0),Math.hypot(e,i)<34)return;const a=Math.abs(e)>=Math.abs(i)?e>0?xt:bt:i>0?gt:ft;At(this,a),this.lastX=t.clientX,this.lastY=t.clientY}flashOk(){this.okFlash=!1,requestAnimationFrame(()=>{this.okFlash=!0}),clearTimeout(this.okTimer),this.okTimer=setTimeout(()=>{this.okFlash=!1},460)}fireTap(){this.tap={x:this.originLX,y:this.originLY,id:++this.tapId},clearTimeout(this.tapTimer),this.tapTimer=setTimeout(()=>{this.tap=null},520)}onUp(){this.pressed&&!this.moved&&(At(this,yt),this.flashOk(),this.fireTap()),this.pressed=!1,this.padDir=null,this.target.x=0,this.target.y=0,this.reduceMotion?(this.pos.x=0,this.pos.y=0,this.vel.x=0,this.vel.y=0,this.applyKnob()):this.startLoop()}updated(){this.applyKnob()}render(){return I`
+  `,St=((t,e)=>{for(var i,a=e,s=t.length-1;s>=0;s--)(i=t[s])&&(a=i(a)||a);return a})([ct("atv-dpad")],St);var Ot=Object.defineProperty,Pt=Object.getOwnPropertyDescriptor,Ct=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Pt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Ot(e,i,r),r};let Mt=class extends ot{constructor(){super(...arguments),this.pressed=!1,this.padDir=null,this.okFlash=!1,this.tap=null,this.tapId=0,this.originX=0,this.originY=0,this.lastX=0,this.lastY=0,this.originLX=0,this.originLY=0,this.moved=!1,this.centerX=0,this.centerY=0,this.maxR=0,this.pos={x:0,y:0},this.vel={x:0,y:0},this.target={x:0,y:0},this.lastT=0,this.raf=0,this.step=t=>{this.lastT||(this.lastT=t);let e=(t-this.lastT)/1e3;this.lastT=t,e=Math.min(e,.05);const i=-600*(this.pos.x-this.target.x)-34*this.vel.x,a=-600*(this.pos.y-this.target.y)-34*this.vel.y;if(this.vel.x+=i*e,this.vel.y+=a*e,this.pos.x+=this.vel.x*e,this.pos.y+=this.vel.y*e,this.applyKnob(),Math.abs(this.vel.x)<1.5&&Math.abs(this.vel.y)<1.5&&Math.abs(this.pos.x-this.target.x)<.3&&Math.abs(this.pos.y-this.target.y)<.3&&!this.pressed)return this.pos.x=this.target.x,this.pos.y=this.target.y,this.vel.x=0,this.vel.y=0,this.applyKnob(),void(this.raf=0);this.raf=requestAnimationFrame(this.step)},this.onClick=t=>{this.pressed=!0,this.moved=!1,this.originX=this.lastX=t.clientX,this.originY=this.lastY=t.clientY;const e=t.currentTarget.getBoundingClientRect();this.centerX=e.left+e.width/2,this.centerY=e.top+e.height/2,this.maxR=e.width/2*.66,this.originLX=t.clientX-e.left,this.originLY=t.clientY-e.top,this.setTarget(t.clientX,t.clientY),this.reduceMotion||this.startLoop();try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}}}get reduceMotion(){return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches??!1}disconnectedCallback(){super.disconnectedCallback(),cancelAnimationFrame(this.raf),clearTimeout(this.okTimer),clearTimeout(this.tapTimer)}clampToRadius(t,e){const i=Math.hypot(t,e);return i>this.maxR&&i>0?{x:t/i*this.maxR,y:e/i*this.maxR}:{x:t,y:e}}setTarget(t,e){const{x:i,y:a}=this.clampToRadius(t-this.centerX,e-this.centerY);this.target.x=i,this.target.y=a;const s=Math.hypot(i,a);this.padDir=this.pressed&&s>.5*this.maxR?Math.abs(i)>=Math.abs(a)?i>0?"right":"left":a>0?"down":"up":null,this.reduceMotion&&(this.pos.x=i,this.pos.y=a,this.vel.x=0,this.vel.y=0,this.applyKnob())}startLoop(){this.lastT=0,this.raf||(this.raf=requestAnimationFrame(this.step))}applyKnob(){const t=this.knobEl;if(!t)return;const e=Math.hypot(this.vel.x,this.vel.y),i=Math.max(-14,Math.min(14,.05*-this.vel.x)),a=1+Math.min(.12,9e-4*e);if(t.style.transform=`translate(${Math.round(this.pos.x)}px, ${Math.round(this.pos.y)}px) rotate(${i.toFixed(2)}deg) scale(${a.toFixed(3)})`,this.trailEl){const t=Math.max(-10,Math.min(10,.012*-this.vel.x)),i=Math.max(-10,Math.min(10,.012*-this.vel.y));this.trailEl.style.transform=`translate(${t.toFixed(1)}px, ${i.toFixed(1)}px)`,this.trailEl.style.opacity=String(Math.min(.5,e/2600))}}onMove(t){if(!this.pressed)return;this.setTarget(t.clientX,t.clientY);const e=t.clientX-this.lastX,i=t.clientY-this.lastY;if(Math.hypot(t.clientX-this.originX,t.clientY-this.originY)>18&&(this.moved=!0),Math.hypot(e,i)<34)return;const a=Math.abs(e)>=Math.abs(i)?e>0?xt:bt:i>0?gt:ft;At(this,a),this.lastX=t.clientX,this.lastY=t.clientY}flashOk(){this.okFlash=!1,requestAnimationFrame(()=>{this.okFlash=!0}),clearTimeout(this.okTimer),this.okTimer=setTimeout(()=>{this.okFlash=!1},460)}fireTap(){this.tap={x:this.originLX,y:this.originLY,id:++this.tapId},clearTimeout(this.tapTimer),this.tapTimer=setTimeout(()=>{this.tap=null},520)}onUp(){this.pressed&&!this.moved&&(At(this,yt),this.flashOk(),this.fireTap()),this.pressed=!1,this.padDir=null,this.target.x=0,this.target.y=0,this.reduceMotion?(this.pos.x=0,this.pos.y=0,this.vel.x=0,this.vel.y=0,this.applyKnob()):this.startLoop()}updated(){this.applyKnob()}render(){return F`
       <div
         class="pad ${this.pressed?"pressed":""}"
         role="button"
@@ -121,11 +121,11 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           <div class="ball"><ha-icon icon="mdi:circle-medium"></ha-icon></div>
         </div>
 
-        ${this.tap?I`<span
+        ${this.tap?F`<span
               class="tap"
               style="left:${this.tap.x}px; top:${this.tap.y}px"
               data-tap=${this.tap.id}
-            ></span>`:F}
+            ></span>`:K}
       </div>
     `}};Mt.styles=r`
     :host {
@@ -359,7 +359,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
         transition: none;
       }
     }
-  `,Ct([ht()],Mt.prototype,"pressed",2),Ct([ht()],Mt.prototype,"padDir",2),Ct([ht()],Mt.prototype,"okFlash",2),Ct([ht()],Mt.prototype,"tap",2),Ct([ut(".knob")],Mt.prototype,"knobEl",2),Ct([ut(".trail")],Mt.prototype,"trailEl",2),Mt=Ct([ct("atv-touchpad")],Mt);var Dt=Object.defineProperty,Rt=Object.getOwnPropertyDescriptor,Ut=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Rt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Dt(e,i,r),r};let zt=class extends ot{constructor(){super(...arguments),this.key="",this.icon="",this.label="",this.accent=!1,this.small=!1,this.stretch=!1,this.repeater=new St(()=>At(this,this.key))}down(t){t.preventDefault();try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}this.repeater.start()}render(){return I`
+  `,Ct([ht()],Mt.prototype,"pressed",2),Ct([ht()],Mt.prototype,"padDir",2),Ct([ht()],Mt.prototype,"okFlash",2),Ct([ht()],Mt.prototype,"tap",2),Ct([ut(".knob")],Mt.prototype,"knobEl",2),Ct([ut(".trail")],Mt.prototype,"trailEl",2),Mt=Ct([ct("atv-touchpad")],Mt);var Dt=Object.defineProperty,Rt=Object.getOwnPropertyDescriptor,Nt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Rt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Dt(e,i,r),r};let Ut=class extends ot{constructor(){super(...arguments),this.key="",this.icon="",this.label="",this.accent=!1,this.small=!1,this.stretch=!1,this.repeater=new Et(()=>At(this,this.key))}down(t){t.preventDefault();try{t.currentTarget.setPointerCapture(t.pointerId)}catch{}this.repeater.start()}render(){return F`
       <button
         class="btn ${this.accent?"accent":""} ${this.small?"small":""}"
         aria-label=${this.label}
@@ -371,7 +371,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       >
         <ha-icon icon=${this.icon}></ha-icon>
       </button>
-    `}};zt.styles=r`
+    `}};Ut.styles=r`
     :host {
       display: block;
     }
@@ -454,7 +454,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       );
       filter: brightness(1.04);
     }
-  `,Ut([dt({type:String})],zt.prototype,"key",2),Ut([dt({type:String})],zt.prototype,"icon",2),Ut([dt({type:String})],zt.prototype,"label",2),Ut([dt({type:Boolean})],zt.prototype,"accent",2),Ut([dt({type:Boolean})],zt.prototype,"small",2),Ut([dt({type:Boolean,reflect:!0})],zt.prototype,"stretch",2),zt=Ut([ct("atv-repeat-button")],zt);var jt=Object.defineProperty,Nt=Object.getOwnPropertyDescriptor,Lt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Nt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&jt(e,i,r),r};let Ht=class extends ot{constructor(){super(...arguments),this.mode="append",this.value="",this.sent="",this.focused=!1}willUpdate(t){t.has("mirror")&&void 0!==this.mirror&&!this.focused&&(this.value=this.mirror,this.sent=this.mirror)}onInput(t){const e=t.target.value;for(const t of function(t,e,i){if("replace"===i)return 0===e.length?t.length?[{type:"del",count:t.length}]:[]:[{type:"text",text:e}];if(e.length>t.length&&e.startsWith(t))return[{type:"text",text:e.slice(t.length)}];if(t.startsWith(e)){const i=t.length-e.length;return i?[{type:"del",count:i}]:[]}const a=t.length?[{type:"del",count:t.length}]:[];return e&&a.push({type:"text",text:e}),a}(this.sent,e,this.mode))"text"===t.type?Et(this,t.text):this.deleteChars(t.count);this.sent=e,this.value=e}deleteChars(t){for(let e=0;e<t;e++)At(this,"DEL")}clearField(){this.deleteChars(this.sent.length),this.sent="",this.value="";const t=this.renderRoot.querySelector("input.field");t&&(t.value="")}render(){return I`
+  `,Nt([dt({type:String})],Ut.prototype,"key",2),Nt([dt({type:String})],Ut.prototype,"icon",2),Nt([dt({type:String})],Ut.prototype,"label",2),Nt([dt({type:Boolean})],Ut.prototype,"accent",2),Nt([dt({type:Boolean})],Ut.prototype,"small",2),Nt([dt({type:Boolean,reflect:!0})],Ut.prototype,"stretch",2),Ut=Nt([ct("atv-repeat-button")],Ut);var zt=Object.defineProperty,jt=Object.getOwnPropertyDescriptor,Lt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?jt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&zt(e,i,r),r};let Ht=class extends ot{constructor(){super(...arguments),this.mode="append",this.value="",this.sent=""}onInput(t){const e=t.target.value;for(const t of function(t,e,i){if("replace"===i)return 0===e.length?t.length?[{type:"del",count:t.length}]:[]:[{type:"text",text:e}];if(e.length>t.length&&e.startsWith(t))return[{type:"text",text:e.slice(t.length)}];if(t.startsWith(e)){const i=t.length-e.length;return i?[{type:"del",count:i}]:[]}const a=t.length?[{type:"del",count:t.length}]:[];return e&&a.push({type:"text",text:e}),a}(this.sent,e,this.mode))"text"===t.type?Tt(this,t.text):this.deleteChars(t.count);this.sent=e,this.value=e}deleteChars(t){for(let e=0;e<t;e++)At(this,"DEL")}clearField(){this.deleteChars(this.sent.length),this.sent="",this.value="";const t=this.renderRoot.querySelector("input.field");t&&(t.value="")}render(){return F`
       <div class="bar">
         <input
           class="field"
@@ -465,8 +465,6 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           autocapitalize="off"
           spellcheck="false"
           @input=${this.onInput}
-          @focus=${()=>this.focused=!0}
-          @blur=${()=>this.focused=!1}
         />
         <div class="keys">
           <button type="button" class="iconbtn" aria-label="Clear" @click=${()=>this.clearField()}>
@@ -548,9 +546,9 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       transform: translateY(1px) scale(0.97);
       box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.45);
     }
-  `,Lt([dt({type:String})],Ht.prototype,"mirror",2),Lt([dt({type:String})],Ht.prototype,"mode",2),Lt([ht()],Ht.prototype,"value",2),Ht=Lt([ct("atv-keyboard")],Ht);var It=Object.defineProperty,Kt=Object.getOwnPropertyDescriptor,Ft=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Kt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&It(e,i,r),r};let Xt=class extends ot{constructor(){super(...arguments),this.apps=[]}render(){const t=!!this.foreground&&this.apps.some(t=>Yt(t,this.foreground));return I`
+  `,Lt([dt({type:String})],Ht.prototype,"mode",2),Lt([ht()],Ht.prototype,"value",2),Ht=Lt([ct("atv-keyboard")],Ht);var Ft=Object.defineProperty,It=Object.getOwnPropertyDescriptor,Kt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?It(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Ft(e,i,r),r};let Vt=class extends ot{constructor(){super(...arguments),this.apps=[]}render(){const t=!!this.foreground&&this.apps.some(t=>Yt(t,this.foreground));return F`
       <div class="grid">
-        ${this.apps.map(e=>{const i=Yt(e,this.foreground);return I`
+        ${this.apps.map(e=>{const i=Yt(e,this.foreground);return F`
             <button
               class="tile ${i?"active":""} ${t&&!i?"dim":""}"
               aria-pressed=${i}
@@ -558,11 +556,11 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
               @click=${()=>((t,e)=>_t(this,kt,{activity:e.activity,service:e.service,data:e.data}))(0,e)}
             >
               <span class="chip"><ha-icon icon=${e.icon??"mdi:application"}></ha-icon></span>
-              ${e.name?I`<span class="label">${e.name}</span>`:""}
+              ${e.name?F`<span class="label">${e.name}</span>`:""}
             </button>
           `})}
       </div>
-    `}};Xt.styles=r`
+    `}};Vt.styles=r`
     :host {
       display: block;
     }
@@ -641,7 +639,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       white-space: nowrap;
       color: var(--atv-text-dim);
     }
-  `,Ft([dt({attribute:!1})],Xt.prototype,"apps",2),Ft([dt({attribute:!1})],Xt.prototype,"foreground",2),Xt=Ft([ct("atv-app-grid")],Xt);var Vt=Object.defineProperty,Wt=Object.getOwnPropertyDescriptor,Bt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Wt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Vt(e,i,r),r};console.info(`%c ${vt} %c 0.1.0 `,"color: white; background: #4285f4; font-weight: 700; border-radius: 3px 0 0 3px;","color: white; background: #34a853; font-weight: 700; border-radius: 0 3px 3px 0;");let qt=class extends ot{constructor(){super(),this.mode="both",this.surface="touch",this.keyboardOpen=!1,this.appsOpen=!1,this.volumeOpen=!1,this.pickerOpen=!1,this.sendQueue=[],this.sending=!1,this.onKey=t=>this.sendKey(t.detail.key),this.onText=t=>this.sendText(t.detail.text),this.onActivity=t=>{const{activity:e,service:i,data:a}=t.detail;if(i){const[t,...e]=i.split(".");return void this.callService(t,e.join("."),a??{},{entity_id:this.target?.entity??this.config.entity})}e&&this.launchActivity(e)},this.addEventListener($t,this.onKey),this.addEventListener(wt,this.onText),this.addEventListener(kt,this.onActivity)}static async getConfigElement(){return await Promise.resolve().then(function(){return te}),document.createElement(mt)}static getStubConfig(t){const e=Object.keys(t.states).find(t=>t.startsWith("remote."));return{type:`custom:${vt}`,entity:e??"remote.living_room_tv",mode:"both",apps:[]}}setConfig(t){if(!t.entity||!t.entity.startsWith("remote."))throw new Error("You must specify a `remote.` entity from the androidtv_remote integration.");this.config={mode:"both",show_power:!0,show_volume:!0,show_media:!0,show_keyboard:!0,haptic_feedback:!0,...t},this.mode=this.config.mode??"both",this.surface="dpad"===this.mode?"dpad":"touch";const e=this.targets,i=this.activeEntity??this.readStoredTarget();this.activeEntity=i&&e.some(t=>t.entity===i)?i:e[0]?.entity}readStoredTarget(){try{return localStorage.getItem(qt.STORAGE_KEY)??void 0}catch{return}}storeTarget(t){try{localStorage.setItem(qt.STORAGE_KEY,t)}catch{}}getCardSize(){let t=9;return this.config?.apps?.length&&(t+=2),this.config?.show_keyboard&&(t+=1),t}onDrawerClick(t){t.target===t.currentTarget&&(this.appsOpen=!1,this.volumeOpen=!1)}get remoteState(){const t=this.target?.entity;return t?this.hass?.states[t]:void 0}get targets(){const t=this.config;if(!t)return[];const e=new Set,i=[];for(const a of[t.entity,...t.entities??[]]){const s="string"==typeof a?{entity:a}:{entity:a.entity,name:a.name,media_player:a.media_player,ime_entity:a.ime_entity};s.entity?.startsWith("remote.")&&!e.has(s.entity)&&(e.add(s.entity),s.entity===t.entity&&(s.media_player??=t.media_player,s.ime_entity??=t.ime_entity),i.push(s))}return i}get target(){const t=this.targets;return t.find(t=>t.entity===this.activeEntity)??t[0]}nameFor(t){return t.name??this.hass?.states[t.entity]?.attributes.friendly_name??t.entity}selectTarget(t){this.activeEntity=t,this.storeTarget(t),this.pickerOpen=!1,this.keyboardOpen=!1,this.vibrate()}get isOn(){return"on"===this.remoteState?.state}get companionMediaPlayer(){const t=this.target;if(!t)return;if(t.media_player)return t.media_player;const e=`media_player.${t.entity.replace(/^remote\./,"")}`;return this.hass?.states[e]?e:void 0}get mediaState(){const t=this.companionMediaPlayer;return t?this.hass?.states[t]:void 0}get offline(){return"offline"===this.statusKind}get controlsDisabled(){return!this.isOn}get foregroundPackage(){const t=this.mediaState?.attributes?.app_id,e=this.remoteState?.attributes?.current_activity;return"string"==typeof t&&t||"string"==typeof e&&e||void 0}get activeAppName(){const t=this.foregroundPackage;if(t)return this.config.apps?.find(e=>Yt(e,t))?.name||void 0}prettyApp(t){if(!t)return;let e=t;for(const t of["com.google.android.apps.tv.","com.google.android.","com.android.","android."])if(e.toLowerCase().startsWith(t)){e=e.slice(t.length)||e;break}return{launcherx:"Home",launcher:"Home",leanback:"Home",tvlauncher:"Home",dreamx:"Screensaver"}[e.toLowerCase()]||e.charAt(0).toUpperCase()+e.slice(1)}get nowPlaying(){const t=this.mediaState;if(!t||"off"===t.state||"unavailable"===t.state)return null;const e="string"==typeof t.attributes.media_title?t.attributes.media_title:"",i="string"==typeof t.attributes.media_artist?t.attributes.media_artist:"",a="string"==typeof t.attributes.app_name?t.attributes.app_name:"",s=this.activeAppName||this.prettyApp(a)||(this.isOn?this.activityLabel:""),r=e||s;return r?{primary:r,secondary:(e?i||s:"")||void 0}:null}get statusKind(){const t=this.remoteState?.state;return t&&"unavailable"!==t&&"unknown"!==t?this.isOn?"on":"off":"offline"}get imeState(){const t=this.target?.ime_entity;return t?this.hass?.states[t]:void 0}get imeOpen(){return"on"===this.imeState?.state}get imeText(){const t=this.imeState?.attributes?.text;return"string"==typeof t&&t.length?t:void 0}get keyboardActive(){return this.keyboardOpen||this.imeOpen}get keyboardVisible(){return!!this.config?.show_keyboard&&this.keyboardActive}vibrate(){this.config.haptic_feedback&&navigator.vibrate?.(8)}callService(t,e,i,a){this.sendQueue.push({domain:t,service:e,data:i,entity_id:a?.entity_id??this.target?.entity??this.config.entity}),this.pumpQueue()}async pumpQueue(){if(!this.sending){this.sending=!0;try{let t=this.sendQueue.shift();for(;t;){try{await this.hass.callService(t.domain,t.service,t.data,{entity_id:t.entity_id})}catch(e){console.warn(`[androidtv-plus] ${t.domain}.${t.service} failed`,e)}t=this.sendQueue.shift()}}finally{this.sending=!1}}}sendKey(t){this.vibrate(),this.callService("remote","send_command",{command:t})}sendText(t){this.callService("remote","send_command",{command:`text:${t}`})}launchActivity(t){this.callService("remote","turn_on",{activity:t})}get cardTitle(){return this.targets.length>1&&this.target?this.nameFor(this.target):this.config.name??(this.target?this.nameFor(this.target):"Android TV")}get activityLabel(){const t=this.remoteState?.attributes.current_activity;if(!t)return"Idle";const e=t.split(".").pop()??t;return e.charAt(0).toUpperCase()+e.slice(1)}get statusText(){return"offline"===this.statusKind?"on"===this.mediaState?.state?"Reconnecting…":"Unavailable":this.isOn?this.activeAppName||this.prettyApp(this.foregroundPackage)||this.activityLabel:"Off"}get statusTitle(){const t=this.remoteState;if(!t)return`${this.target?.entity??""} — not found`;const e=t.last_updated?new Date(t.last_updated).toLocaleString():"unknown";return`${this.target?.entity??""}\nstate: ${t.state}\nupdated: ${e}`}renderSegmented(){return"both"!==this.config.mode?F:I`
+  `,Kt([dt({attribute:!1})],Vt.prototype,"apps",2),Kt([dt({attribute:!1})],Vt.prototype,"foreground",2),Vt=Kt([ct("atv-app-grid")],Vt);var Xt=Object.defineProperty,Wt=Object.getOwnPropertyDescriptor,Bt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Wt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Xt(e,i,r),r};console.info(`%c ${vt} %c 0.2.0 `,"color: white; background: #4285f4; font-weight: 700; border-radius: 3px 0 0 3px;","color: white; background: #34a853; font-weight: 700; border-radius: 0 3px 3px 0;");let qt=class extends ot{constructor(){super(),this.mode="both",this.surface="touch",this.keyboardOpen=!1,this.appsOpen=!1,this.volumeOpen=!1,this.pickerOpen=!1,this.tick=0,this.sendQueue=[],this.sending=!1,this.onKey=t=>this.sendKey(t.detail.key),this.onText=t=>this.sendText(t.detail.text),this.onActivity=t=>{const{activity:e,service:i,data:a}=t.detail;if(i){const[t,...e]=i.split(".");return void this.callService(t,e.join("."),a??{},{entity_id:this.target?.entity??this.config.entity})}e&&this.launchActivity(e)},this.addEventListener($t,this.onKey),this.addEventListener(wt,this.onText),this.addEventListener(kt,this.onActivity)}updated(){this.hasProgress&&void 0===this.progressTimer?this.progressTimer=window.setInterval(()=>{this.tick++},1e3):this.hasProgress||void 0===this.progressTimer||(window.clearInterval(this.progressTimer),this.progressTimer=void 0)}disconnectedCallback(){super.disconnectedCallback(),void 0!==this.progressTimer&&(window.clearInterval(this.progressTimer),this.progressTimer=void 0)}static async getConfigElement(){return await Promise.resolve().then(function(){return te}),document.createElement(mt)}static getStubConfig(t){const e=Object.keys(t.states).find(t=>t.startsWith("remote."));return{type:`custom:${vt}`,entity:e??"remote.living_room_tv",mode:"both",apps:[]}}setConfig(t){if(!t.entity||!t.entity.startsWith("remote."))throw new Error("You must specify a `remote.` entity from the androidtv_remote integration.");this.config={mode:"both",show_power:!0,show_volume:!0,show_media:!0,show_keyboard:!0,haptic_feedback:!0,...t},this.mode=this.config.mode??"both",this.surface="dpad"===this.mode?"dpad":"touch";const e=this.targets,i=this.activeEntity??this.readStoredTarget();this.activeEntity=i&&e.some(t=>t.entity===i)?i:e[0]?.entity}readStoredTarget(){try{return localStorage.getItem(qt.STORAGE_KEY)??void 0}catch{return}}storeTarget(t){try{localStorage.setItem(qt.STORAGE_KEY,t)}catch{}}getCardSize(){let t=9;return this.apps?.length&&(t+=2),this.config?.show_keyboard&&(t+=1),t}onDrawerClick(t){t.target===t.currentTarget&&(this.appsOpen=!1,this.volumeOpen=!1)}get remoteState(){const t=this.target?.entity;return t?this.hass?.states[t]:void 0}get targets(){return this.config?function(t){const e=new Set,i=[],a=[t.entity,...t.entities??[]];for(const s of a){const a="string"==typeof s?{entity:s}:{...s};a.entity?.startsWith("remote.")&&!e.has(a.entity)&&(e.add(a.entity),a.entity===t.entity&&(a.media_player??=t.media_player,a.text_mode??=t.text_mode,a.apps??=t.apps),i.push(a))}return i}(this.config):[]}get target(){const t=this.targets;return t.find(t=>t.entity===this.activeEntity)??t[0]}get apps(){return this.target?.apps??this.config?.apps??[]}get textMode(){return this.target?.text_mode??this.config?.text_mode??"append"}nameFor(t){return t.name??this.hass?.states[t.entity]?.attributes.friendly_name??t.entity}selectTarget(t){this.activeEntity=t,this.storeTarget(t),this.pickerOpen=!1,this.keyboardOpen=!1,this.vibrate()}get isOn(){return"on"===this.remoteState?.state}get companionMediaPlayer(){const t=this.target;if(!t)return;if(t.media_player)return t.media_player;const e=`media_player.${t.entity.replace(/^remote\./,"")}`;return this.hass?.states[e]?e:void 0}get mediaState(){const t=this.companionMediaPlayer;return t?this.hass?.states[t]:void 0}get offline(){return"offline"===this.statusKind}get controlsDisabled(){return!this.isOn}get foregroundPackage(){const t=this.mediaState?.attributes?.app_id,e=this.remoteState?.attributes?.current_activity;return"string"==typeof t&&t||"string"==typeof e&&e||void 0}get activeAppName(){const t=this.foregroundPackage;if(t)return this.apps.find(e=>Yt(e,t))?.name||void 0}prettyApp(t){if(!t)return;let e=t;for(const t of["com.google.android.apps.tv.","com.google.android.","com.android.","android."])if(e.toLowerCase().startsWith(t)){e=e.slice(t.length)||e;break}return{launcherx:"Home",launcher:"Home",leanback:"Home",tvlauncher:"Home",dreamx:"Screensaver"}[e.toLowerCase()]||e.charAt(0).toUpperCase()+e.slice(1)}get nowPlaying(){const t=this.mediaState;if(!t||"off"===t.state||"unavailable"===t.state)return null;const e="string"==typeof t.attributes.media_title?t.attributes.media_title:"",i="string"==typeof t.attributes.media_artist?t.attributes.media_artist:"",a="string"==typeof t.attributes.app_name?t.attributes.app_name:"",s=this.activeAppName||this.prettyApp(a)||(this.isOn?this.activityLabel:""),r=e||s;return r?{primary:r,secondary:(e?i||s:"")||void 0,progress:this.mediaProgress(t)}:null}mediaProgress(t){this.tick;const e=t.attributes.media_duration;let i=t.attributes.media_position;if(!("number"!=typeof e||e<=0||"number"!=typeof i)){if("playing"===t.state){const e=t.attributes.media_position_updated_at,a="string"==typeof e?Date.parse(e):NaN;Number.isNaN(a)||(i+=Math.max(0,(Date.now()-a)/1e3))}return Math.min(1,Math.max(0,i/e))}}get hasProgress(){const t=this.mediaState;return"playing"===t?.state&&"number"==typeof t.attributes.media_duration&&"number"==typeof t.attributes.media_position}get statusKind(){const t=this.remoteState?.state;return t&&"unavailable"!==t&&"unknown"!==t?this.isOn?"on":"off":"offline"}get keyboardVisible(){return!!this.config?.show_keyboard&&this.keyboardOpen}vibrate(){this.config.haptic_feedback&&navigator.vibrate?.(8)}callService(t,e,i,a){this.sendQueue.push({domain:t,service:e,data:i,entity_id:a?.entity_id??this.target?.entity??this.config.entity}),this.pumpQueue()}async pumpQueue(){if(!this.sending){this.sending=!0;try{let t=this.sendQueue.shift();for(;t;){try{await this.hass.callService(t.domain,t.service,t.data,{entity_id:t.entity_id})}catch(e){console.warn(`[androidtv-plus] ${t.domain}.${t.service} failed`,e)}t=this.sendQueue.shift()}}finally{this.sending=!1}}}sendKey(t){this.vibrate(),this.callService("remote","send_command",{command:t})}sendText(t){this.callService("remote","send_command",{command:`text:${t}`})}launchActivity(t){this.callService("remote","turn_on",{activity:t})}get cardTitle(){return this.targets.length>1&&this.target?this.nameFor(this.target):this.config.name??(this.target?this.nameFor(this.target):"Android TV")}get activityLabel(){const t=this.remoteState?.attributes.current_activity;if(!t)return"Idle";const e=t.split(".").pop()??t;return e.charAt(0).toUpperCase()+e.slice(1)}get statusText(){return"offline"===this.statusKind?"on"===this.mediaState?.state?"Reconnecting…":"Unavailable":this.isOn?this.activeAppName||this.prettyApp(this.foregroundPackage)||this.activityLabel:"Off"}get statusTitle(){const t=this.remoteState;if(!t)return`${this.target?.entity??""} — not found`;const e=t.last_updated?new Date(t.last_updated).toLocaleString():"unknown";return`${this.target?.entity??""}\nstate: ${t.state}\nupdated: ${e}`}renderSegmented(){return"both"!==this.config.mode?K:F`
       <div class="segmented" role="tablist">
         <button
           role="tab"
@@ -662,37 +660,37 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           <ha-icon icon="mdi:gamepad-variant-outline"></ha-icon>
         </button>
       </div>
-    `}renderSurface(){const t="dpad"===this.surface&&"touch"!==this.config.mode,e="touch"===this.surface&&"dpad"!==this.config.mode;return I`
-      ${t?I`<atv-dpad></atv-dpad>`:F}
-      ${e?I`<atv-touchpad></atv-touchpad>`:F}
-    `}renderTransport(){return I`
+    `}renderSurface(){const t="dpad"===this.surface&&"touch"!==this.config.mode,e="touch"===this.surface&&"dpad"!==this.config.mode;return F`
+      ${t?F`<atv-dpad></atv-dpad>`:K}
+      ${e?F`<atv-touchpad></atv-touchpad>`:K}
+    `}renderTransport(){return F`
       <div class="transport">
         <atv-repeat-button stretch .key=${"MEDIA_REWIND"} icon="mdi:rewind" label="Rewind"></atv-repeat-button>
         <atv-repeat-button stretch .key=${"MEDIA_PLAY_PAUSE"} icon="mdi:play-pause" label="Play/Pause" accent></atv-repeat-button>
         <atv-repeat-button stretch .key=${"MEDIA_FAST_FORWARD"} icon="mdi:fast-forward" label="Fast forward"></atv-repeat-button>
       </div>
-    `}renderSecondary(){return I`
+    `}renderSecondary(){return F`
       <div class="secondary">
         <atv-repeat-button stretch .key=${"MENU"} icon="mdi:menu" label="Menu" small></atv-repeat-button>
         <atv-repeat-button stretch .key=${"SEARCH"} icon="mdi:magnify" label="Search" small></atv-repeat-button>
-        ${this.config.apps?.length?I`<button
+        ${this.apps.length?F`<button
               class="round small grow ${this.appsOpen?"on":""}"
               aria-label="Apps"
               title="Apps"
               @click=${()=>{this.appsOpen=!this.appsOpen,this.appsOpen&&(this.keyboardOpen=!1,this.volumeOpen=!1)}}
             >
               <ha-icon icon="mdi:apps"></ha-icon>
-            </button>`:F}
+            </button>`:K}
       </div>
-    `}render(){return this.config&&this.hass?I`
+    `}render(){return this.config&&this.hass?F`
       <ha-card>
         <div class="remote ${this.controlsDisabled?"controls-off":""} ${this.offline?"offline":""}">
-          ${this.pickerOpen?I`<div class="picker-backdrop" @click=${()=>this.pickerOpen=!1}></div>`:F}
+          ${this.pickerOpen?F`<div class="picker-backdrop" @click=${()=>this.pickerOpen=!1}></div>`:K}
           <header class="hero">
             <div class="device">
               <div class="device-icon"><ha-icon icon="mdi:television"></ha-icon></div>
               <div class="meta">
-                ${this.targets.length>1?I`<div class="picker">
+                ${this.targets.length>1?F`<div class="picker">
                       <button
                         class="title pick"
                         aria-haspopup="listbox"
@@ -703,8 +701,8 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
                         <span>${this.cardTitle}</span>
                         <ha-icon icon="mdi:chevron-down"></ha-icon>
                       </button>
-                      ${this.pickerOpen?I`<div class="picker-list" role="listbox" aria-label="TV">
-                            ${this.targets.map(t=>I`<button
+                      ${this.pickerOpen?F`<div class="picker-list" role="listbox" aria-label="TV">
+                            ${this.targets.map(t=>F`<button
                                 role="option"
                                 aria-selected=${t.entity===this.target.entity?"true":"false"}
                                 class=${t.entity===this.target.entity?"sel":""}
@@ -715,52 +713,60 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
                                 ></ha-icon>
                                 <span>${this.nameFor(t)}</span>
                               </button>`)}
-                          </div>`:F}
-                    </div>`:I`<div class="title">${this.cardTitle}</div>`}
+                          </div>`:K}
+                    </div>`:F`<div class="title">${this.cardTitle}</div>`}
                 <div class="status ${this.statusKind}" title=${this.statusTitle}>
                   <span class="dot"></span>
                   <span>${this.statusText}</span>
                 </div>
               </div>
             </div>
-            ${this.config.show_power?I`<atv-repeat-button .key=${"POWER"} icon="mdi:power" label="Power" accent></atv-repeat-button>`:F}
+            ${this.config.show_power?F`<atv-repeat-button .key=${"POWER"} icon="mdi:power" label="Power" accent></atv-repeat-button>`:K}
           </header>
 
           <div class="navrow">
-            ${this.config.show_keyboard?I`<button
-                  class="round lead ${this.keyboardActive?"on":"dim"}"
+            ${this.config.show_keyboard?F`<button
+                  class="round lead ${this.keyboardOpen?"on":"dim"}"
                   aria-label="Keyboard"
                   title="Keyboard"
                   @click=${()=>{this.keyboardOpen=!this.keyboardOpen,this.keyboardOpen&&(this.appsOpen=!1,this.volumeOpen=!1)}}
                 >
                   <ha-icon icon="mdi:keyboard"></ha-icon>
-                </button>`:I`<span></span>`}
+                </button>`:F`<span></span>`}
             ${this.renderSegmented()}
-            ${!1!==this.config.show_volume?I`<button
+            ${!1!==this.config.show_volume?F`<button
                   class="round ${this.volumeOpen?"on":""}"
                   aria-label="Volume"
                   title="Volume"
                   @click=${()=>{this.volumeOpen=!this.volumeOpen,this.volumeOpen&&(this.keyboardOpen=!1,this.appsOpen=!1)}}
                 >
                   <ha-icon icon="mdi:volume-high"></ha-icon>
-                </button>`:I`<span></span>`}
+                </button>`:F`<span></span>`}
           </div>
 
-          ${this.keyboardVisible?I`<div class="kbd-inline">
-                <atv-keyboard .mirror=${this.imeText} .mode=${this.config.text_mode??"append"}></atv-keyboard>
-              </div>`:F}
+          ${this.keyboardVisible?F`<div class="kbd-inline">
+                <atv-keyboard .mode=${this.textMode}></atv-keyboard>
+              </div>`:K}
 
           <div class="surface">${this.renderSurface()}</div>
 
-          ${this.nowPlaying?I`<div class="nowplaying">
-                <ha-icon icon="mdi:play-circle-outline"></ha-icon>
-                <div class="np-meta">
-                  <span class="np-title">${this.nowPlaying.primary}</span>
-                  ${this.nowPlaying.secondary?I`<span class="np-sub">${this.nowPlaying.secondary}</span>`:F}
+          ${this.nowPlaying?F`<div class="nowplaying">
+                <div class="np-main">
+                  <ha-icon icon="mdi:play-circle-outline"></ha-icon>
+                  <div class="np-meta">
+                    <span class="np-title">${this.nowPlaying.primary}</span>
+                    ${this.nowPlaying.secondary?F`<span class="np-sub">${this.nowPlaying.secondary}</span>`:K}
+                  </div>
                 </div>
-              </div>`:F}
+                ${"number"==typeof this.nowPlaying.progress?F`<div class="np-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow=${Math.round(100*this.nowPlaying.progress)}>
+                      <div
+                        class="np-bar-fill"
+                        style="width: ${(100*this.nowPlaying.progress).toFixed(1)}%"
+                      ></div>
+                    </div>`:K}
+              </div>`:K}
 
-          ${this.config.show_media?this.renderTransport():F}
+          ${this.config.show_media?this.renderTransport():K}
 
           <div class="navbtns">
             <atv-repeat-button stretch .key=${"BACK"} icon="mdi:arrow-left" label="Back"></atv-repeat-button>
@@ -770,7 +776,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           ${this.renderSecondary()}
         </div>
       </ha-card>
-      ${this.volumeOpen&&!1!==this.config.show_volume?I`<div class="drawer" @click=${this.onDrawerClick}>
+      ${this.volumeOpen&&!1!==this.config.show_volume?F`<div class="drawer" @click=${this.onDrawerClick}>
             <div class="sheet" role="dialog" aria-label="Volume">
               <div class="handle"></div>
               <div class="transport">
@@ -779,14 +785,14 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
                 <atv-repeat-button .key=${"VOLUME_UP"} icon="mdi:volume-high" label="Volume up"></atv-repeat-button>
               </div>
             </div>
-          </div>`:F}
-      ${this.appsOpen&&this.config.apps?.length?I`<div class="drawer" @click=${this.onDrawerClick}>
+          </div>`:K}
+      ${this.appsOpen&&this.apps.length?F`<div class="drawer" @click=${this.onDrawerClick}>
             <div class="sheet" role="dialog" aria-label="Apps">
               <div class="handle"></div>
-              <atv-app-grid .apps=${this.config.apps} .foreground=${this.foregroundPackage}></atv-app-grid>
+              <atv-app-grid .apps=${this.apps} .foreground=${this.foregroundPackage}></atv-app-grid>
             </div>
-          </div>`:F}
-    `:F}};qt.STORAGE_KEY="androidtv-plus:active",qt.styles=r`
+          </div>`:K}
+    `:K}};qt.STORAGE_KEY="androidtv-plus:active",qt.styles=r`
     :host {
       display: block;
       position: relative;
@@ -1045,13 +1051,19 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
     }
     .nowplaying {
       display: flex;
-      align-items: center;
-      gap: 9px;
+      flex-direction: column;
+      gap: 7px;
       min-width: 0;
       padding: 8px 12px;
       border-radius: 12px;
       color: var(--atv-text-dim);
       background: var(--atv-surface-2);
+    }
+    .np-main {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
     }
     .nowplaying ha-icon {
       --mdc-icon-size: 18px;
@@ -1061,6 +1073,18 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       display: flex;
       flex-direction: column;
       min-width: 0;
+    }
+    .np-bar {
+      height: 3px;
+      border-radius: 2px;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--atv-text-dim) 25%, transparent);
+    }
+    .np-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--atv-accent);
+      transition: width 1s linear;
     }
     .np-title {
       font-size: 12.5px;
@@ -1243,85 +1267,96 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       min-width: 0;
       border-radius: 999px;
     }
-  `,Bt([dt({attribute:!1})],qt.prototype,"hass",2),Bt([ht()],qt.prototype,"config",2),Bt([ht()],qt.prototype,"mode",2),Bt([ht()],qt.prototype,"surface",2),Bt([ht()],qt.prototype,"keyboardOpen",2),Bt([ht()],qt.prototype,"appsOpen",2),Bt([ht()],qt.prototype,"volumeOpen",2),Bt([ht()],qt.prototype,"pickerOpen",2),Bt([ht()],qt.prototype,"activeEntity",2),qt=Bt([ct(vt)],qt),window.customCards=window.customCards??[],window.customCards.push({type:vt,name:"Android TV Plus",description:"A d-pad and touch remote for Android TV, with app tiles and keyboard."});var Qt=Object.defineProperty,Jt=Object.getOwnPropertyDescriptor,Gt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Jt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Qt(e,i,r),r};let Zt=class extends ot{setConfig(t){this.config=t}patch(t){this.config={...this.config,...t},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}num(t){return!1!==this.config[t]}toggle(t,e){this.patch({[t]:e.target.checked})}get apps(){return this.config.apps??[]}get tvs(){return(this.config.entities??[]).map(t=>"string"==typeof t?{entity:t}:t)}setTvs(t){this.patch({entities:t.length?t:void 0})}get otherTvs(){const t=this.config.entity,e=this.tvs.map(t=>t.entity),i=new Set,a=[];for(const s of[...e,...Object.keys(this.hass?.states??{})])s.startsWith("remote.")&&s!==t&&!i.has(s)&&(i.add(s),a.push(s));return a.sort((t,e)=>this.friendlyName(t).localeCompare(this.friendlyName(e)))}friendlyName(t){return this.hass?.states[t]?.attributes.friendly_name??t}tvIncluded(t){return this.tvs.some(e=>e.entity===t)}toggleTv(t,e){e?this.tvIncluded(t)||this.setTvs([...this.tvs,{entity:t}]):this.setTvs(this.tvs.filter(e=>e.entity!==t))}setTvName(t,e){this.setTvs(this.tvs.map(i=>i.entity===t?{...i,name:e||void 0}:i))}setApps(t){this.patch({apps:t})}updateApp(t,e){const i=this.apps.map((i,a)=>a===t?{...i,...e}:i);this.setApps(i)}addApp(){this.setApps([...this.apps,{name:"",icon:"mdi:apps",activity:""}])}removeApp(t){this.setApps(this.apps.filter((e,i)=>i!==t))}moveApp(t,e){const i=[...this.apps],a=t+e;a<0||a>=i.length||([i[t],i[a]]=[i[a],i[t]],this.setApps(i))}setKind(t,e){const i=this.apps[t];i&&("service"===e&&void 0!==i.service||"activity"===e&&void 0===i.service||this.updateApp(t,"service"===e?{service:"",activity:void 0,data:void 0}:{activity:"",service:void 0,data:void 0}))}renderApp(t,e){const i=void 0!==t.service;return I`
+  `,Bt([dt({attribute:!1})],qt.prototype,"hass",2),Bt([ht()],qt.prototype,"config",2),Bt([ht()],qt.prototype,"mode",2),Bt([ht()],qt.prototype,"surface",2),Bt([ht()],qt.prototype,"keyboardOpen",2),Bt([ht()],qt.prototype,"appsOpen",2),Bt([ht()],qt.prototype,"volumeOpen",2),Bt([ht()],qt.prototype,"pickerOpen",2),Bt([ht()],qt.prototype,"activeEntity",2),Bt([ht()],qt.prototype,"tick",2),qt=Bt([ct(vt)],qt),window.customCards=window.customCards??[],window.customCards.push({type:vt,name:"Android TV Plus",description:"A d-pad and touch remote for Android TV, with app tiles and keyboard."});var Qt=Object.defineProperty,Jt=Object.getOwnPropertyDescriptor,Gt=(t,e,i,a)=>{for(var s,r=a>1?void 0:a?Jt(e,i):e,o=t.length-1;o>=0;o--)(s=t[o])&&(r=(a?s(e,i,r):s(r))||r);return a&&r&&Qt(e,i,r),r};let Zt=class extends ot{setConfig(t){this.config=t}patch(t){this.config={...this.config,...t},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}num(t){return!1!==this.config[t]}toggle(t,e){this.patch({[t]:e.target.checked})}get apps(){return this.config.apps??[]}get tvs(){return(this.config.entities??[]).map(t=>"string"==typeof t?{entity:t}:t)}setTvs(t){this.patch({entities:t.length?t:void 0})}get otherTvs(){return function(t,e,i){const a=new Set([t]),s=[];for(const t of[...e,...i])t.startsWith("remote.")&&!a.has(t)&&(a.add(t),s.push(t));return s}(this.config.entity,this.tvs.map(t=>t.entity),Object.keys(this.hass?.states??{})).sort((t,e)=>this.friendlyName(t).localeCompare(this.friendlyName(e)))}friendlyName(t){return this.hass?.states[t]?.attributes.friendly_name??t}tvIncluded(t){return this.tvs.some(e=>e.entity===t)}toggleTv(t,e){e?this.tvIncluded(t)||this.setTvs([...this.tvs,{entity:t}]):this.setTvs(this.tvs.filter(e=>e.entity!==t))}setTvName(t,e){this.patchTv(t,{name:e||void 0})}patchTv(t,e){this.setTvs(this.tvs.map(i=>i.entity===t?{...i,...e}:i))}tvTextMode(t){return this.tvs.find(e=>e.entity===t)?.text_mode??this.config.text_mode??"append"}setTvTextMode(t,e){this.patchTv(t,{text_mode:e})}appsFor(t){return null===t?this.apps:this.tvs.find(e=>e.entity===t)?.apps??[]}setAppsFor(t,e){null!==t?this.patchTv(t,{apps:e.length?e:void 0}):this.patch({apps:e})}updateApp(t,e,i){const a=this.appsFor(t).map((t,a)=>a===e?{...t,...i}:t);this.setAppsFor(t,a)}addApp(t){this.setAppsFor(t,[...this.appsFor(t),{name:"",icon:"mdi:apps",activity:""}])}removeApp(t,e){this.setAppsFor(t,this.appsFor(t).filter((t,i)=>i!==e))}moveApp(t,e,i){const a=[...this.appsFor(t)],s=e+i;s<0||s>=a.length||([a[e],a[s]]=[a[s],a[e]],this.setAppsFor(t,a))}setKind(t,e,i){const a=this.appsFor(t)[e];a&&("service"===i&&void 0!==a.service||"activity"===i&&void 0===a.service||this.updateApp(t,e,"service"===i?{service:"",activity:void 0,data:void 0}:{activity:"",service:void 0,data:void 0}))}renderApp(t,e,i){const a=void 0!==e.service;return F`
       <div class="app">
         <div class="app-head">
-          <ha-icon icon=${t.icon||"mdi:apps"}></ha-icon>
-          <span class="app-name">${t.name||"Untitled"}</span>
-          <button class="icon-btn" title="Move up" ?disabled=${0===e} @click=${()=>this.moveApp(e,-1)}>
+          <ha-icon icon=${e.icon||"mdi:apps"}></ha-icon>
+          <span class="app-name">${e.name||"Untitled"}</span>
+          <button class="icon-btn" title="Move up" ?disabled=${0===i} @click=${()=>this.moveApp(t,i,-1)}>
             <ha-icon icon="mdi:arrow-up"></ha-icon>
           </button>
           <button
             class="icon-btn"
             title="Move down"
-            ?disabled=${e===this.apps.length-1}
-            @click=${()=>this.moveApp(e,1)}
+            ?disabled=${i===this.appsFor(t).length-1}
+            @click=${()=>this.moveApp(t,i,1)}
           >
             <ha-icon icon="mdi:arrow-down"></ha-icon>
           </button>
-          <button class="icon-btn danger" title="Remove" @click=${()=>this.removeApp(e)}>
+          <button class="icon-btn danger" title="Remove" @click=${()=>this.removeApp(t,i)}>
             <ha-icon icon="mdi:delete-outline"></ha-icon>
           </button>
         </div>
 
         <ha-textfield
           label="Name"
-          .value=${t.name??""}
-          @change=${t=>this.updateApp(e,{name:t.target.value})}
+          .value=${e.name??""}
+          @change=${e=>this.updateApp(t,i,{name:e.target.value})}
         ></ha-textfield>
 
         <ha-icon-picker
           .hass=${this.hass}
-          .value=${t.icon??""}
+          .value=${e.icon??""}
           label="Icon"
-          @value-changed=${t=>this.updateApp(e,{icon:t.detail.value})}
+          @value-changed=${e=>this.updateApp(t,i,{icon:e.detail.value})}
         ></ha-icon-picker>
 
         <div class="segmented small" role="radiogroup">
           <button
             role="radio"
-            aria-checked=${!i}
-            class=${i?"":"active"}
-            @click=${()=>this.setKind(e,"activity")}
+            aria-checked=${!a}
+            class=${a?"":"active"}
+            @click=${()=>this.setKind(t,i,"activity")}
           >
             Activity / URL
           </button>
           <button
             role="radio"
-            aria-checked=${i}
-            class=${i?"active":""}
-            @click=${()=>this.setKind(e,"service")}
+            aria-checked=${a}
+            class=${a?"active":""}
+            @click=${()=>this.setKind(t,i,"service")}
           >
             Service
           </button>
         </div>
 
-        ${i?I`
+        ${a?F`
               <ha-textfield
                 label="Service (e.g. script.tv_open_jellyfin)"
-                .value=${t.service??""}
-                @change=${t=>this.updateApp(e,{service:t.target.value})}
+                .value=${e.service??""}
+                @change=${e=>this.updateApp(t,i,{service:e.target.value})}
               ></ha-textfield>
               <ha-textfield
                 label="Data (JSON, optional)"
-                .value=${t.data?JSON.stringify(t.data):""}
-                @change=${t=>this.updateData(e,t.target.value)}
+                .value=${e.data?JSON.stringify(e.data):""}
+                @change=${e=>this.updateData(t,i,e.target.value)}
               ></ha-textfield>
-            `:I`
+            `:F`
               <ha-textfield
                 label="Activity / URL (e.g. netflix:// or https://…)"
-                .value=${t.activity??""}
-                @change=${t=>this.updateApp(e,{activity:t.target.value})}
+                .value=${e.activity??""}
+                @change=${e=>this.updateApp(t,i,{activity:e.target.value})}
               ></ha-textfield>
             `}
 
         <ha-textfield
           label="Package / app id (optional, for highlight)"
-          .value=${t.package??""}
-          @change=${t=>this.updateApp(e,{package:t.target.value||void 0})}
+          .value=${e.package??""}
+          @change=${e=>this.updateApp(t,i,{package:e.target.value||void 0})}
         ></ha-textfield>
       </div>
-    `}updateData(t,e){const i=e.trim();if(i)try{const e=JSON.parse(i);if(!e||"object"!=typeof e||Array.isArray(e))throw new Error("expected an object");this.updateApp(t,{data:e})}catch{}else this.updateApp(t,{data:void 0})}render(){return this.hass&&this.config?I`
+    `}renderAppsSection(t,e,i){const a=this.appsFor(t);return F`
+      <div class=${null===t?"section":"apps-group"}>
+        <div class="section-head">
+          <span class="section-title">${e}</span>
+          <button class="add" @click=${()=>this.addApp(t)}>
+            <ha-icon icon="mdi:plus"></ha-icon>Add app
+          </button>
+        </div>
+        ${i?F`<p class="hint">${i}</p>`:K}
+        ${a.length?a.map((e,i)=>this.renderApp(t,e,i)):F`<p class="hint">No app tiles yet — add one to fill the app drawer.</p>`}
+      </div>
+    `}updateData(t,e,i){const a=i.trim();if(a)try{const i=JSON.parse(a);if(!i||"object"!=typeof i||Array.isArray(i))throw new Error("expected an object");this.updateApp(t,e,{data:i})}catch{}else this.updateApp(t,e,{data:void 0})}render(){return this.hass&&this.config?F`
       <div class="form">
         <ha-entity-picker
           .hass=${this.hass}
@@ -1355,7 +1390,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
             Tick any other <code>remote.*</code> entity to offer it in a selector in the card header. The remote
             entity above stays the default.
           </p>
-          ${this.otherTvs.length?this.otherTvs.map(t=>{const e=this.tvIncluded(t),i=this.tvs.find(e=>e.entity===t);return I`
+          ${this.otherTvs.length?this.otherTvs.map(t=>{const e=this.tvIncluded(t),i=this.tvs.find(e=>e.entity===t);return F`
                   <div class="app">
                     <ha-formfield label=${this.friendlyName(t)} class="tvrow">
                       <ha-switch
@@ -1363,17 +1398,35 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
                         @change=${e=>this.toggleTv(t,e.target.checked)}
                       ></ha-switch>
                     </ha-formfield>
-                    ${e?I`<ha-textfield
-                          label="Name (optional)"
-                          .value=${i?.name??""}
-                          @input=${e=>this.setTvName(t,e.target.value)}
-                        ></ha-textfield>`:F}
+                    ${e?F`
+                          <ha-textfield
+                            label="Name (optional)"
+                            .value=${i?.name??""}
+                            @input=${e=>this.setTvName(t,e.target.value)}
+                          ></ha-textfield>
+                          <div class="field-group">
+                            <span class="group-label">Text input mode</span>
+                            <div class="segmented small" role="radiogroup">
+                              ${["append","replace"].map(e=>F`
+                                  <button
+                                    role="radio"
+                                    aria-checked=${this.tvTextMode(t)===e}
+                                    class=${this.tvTextMode(t)===e?"active":""}
+                                    @click=${()=>this.setTvTextMode(t,e)}
+                                  >
+                                    ${"append"===e?"Insert":"Replace field"}
+                                  </button>
+                                `)}
+                            </div>
+                          </div>
+                          ${this.renderAppsSection(t,"Apps","Overrides the default app list for this TV.")}
+                        `:K}
                   </div>
-                `}):I`<p class="hint">No other <code>remote.*</code> entities found.</p>`}
+                `}):F`<p class="hint">No other <code>remote.*</code> entities found.</p>`}
         </div>
 
         <div class="segmented" role="radiogroup">
-          ${["both","dpad","touch"].map(t=>I`
+          ${["both","dpad","touch"].map(t=>F`
               <button
                 role="radio"
                 aria-checked=${this.config.mode===t}
@@ -1404,7 +1457,7 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
         <div class="field-group">
           <span class="group-label">Text input mode</span>
           <div class="segmented small" role="radiogroup">
-            ${["append","replace"].map(t=>I`
+            ${["append","replace"].map(t=>F`
                 <button
                   role="radio"
                   aria-checked=${(this.config.text_mode??"append")===t}
@@ -1421,17 +1474,9 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           </p>
         </div>
 
-        <div class="section">
-          <div class="section-head">
-            <span class="section-title">Apps</span>
-            <button class="add" @click=${()=>this.addApp()}>
-              <ha-icon icon="mdi:plus"></ha-icon>Add app
-            </button>
-          </div>
-          ${this.apps.length?this.apps.map((t,e)=>this.renderApp(t,e)):I`<p class="hint">No app tiles yet — add one to fill the app drawer.</p>`}
-        </div>
+        ${this.renderAppsSection(null,"Apps")}
       </div>
-    `:F}};Zt.styles=r`
+    `:K}};Zt.styles=r`
     .form {
       display: flex;
       flex-direction: column;
@@ -1480,6 +1525,11 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
       gap: 12px;
       padding-top: 6px;
       border-top: 1px solid var(--divider-color, rgba(127, 127, 127, 0.4));
+    }
+    .apps-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .section-head {
       display: flex;
