@@ -1,4 +1,4 @@
-export const CARD_VERSION = '0.2.0';
+export const CARD_VERSION = '0.2.1';
 export const CARD_TAG = 'androidtv-plus-card';
 export const EDITOR_TAG = 'androidtv-plus-card-editor';
 
@@ -36,6 +36,8 @@ export type KeyName = (typeof KEYS)[keyof typeof KEYS];
 export const REPEAT_DELAY_MS = 450;
 /** Interval between repeats while a button is held. */
 export const REPEAT_INTERVAL_MS = 150;
+/** Hold time before a select press becomes a long press (START_LONG/END_LONG). */
+export const LONG_PRESS_MS = 500;
 /** Minimum distance (px) for a touch-surface swipe to register a direction. */
 export const SWIPE_THRESHOLD_PX = 28;
 /** Maximum movement (px) still treated as a tap/select. */

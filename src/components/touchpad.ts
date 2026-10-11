@@ -1,16 +1,21 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
-import { KEYS, SWIPE_STEP_PX, TAP_THRESHOLD_PX } from '../const';
+import { KEYS, LONG_PRESS_MS, SWIPE_STEP_PX, TAP_THRESHOLD_PX } from '../const';
 import { fireKey } from './events';
 
 type Dir = 'up' | 'down' | 'left' | 'right' | null;
 
 /**
- * A gesture touch surface: swipe to move the focus ring, tap to select. A
- * continuous drag keeps emitting directions as it crosses each step. The knob
- * follows the finger through a lightly under-damped spring (a touch of lag,
- * a small overshoot on release), tilts with drag velocity, and the pad lights
- * the edge you are pushing toward.
+ * A gesture touch surface: swipe to move the focus ring, tap to select, hold to
+ * long-press. Each swipe gesture emits exactly ONE direction key, chosen by the
+ * net displacement when it first crosses `SWIPE_STEP_PX` (or at release if it only
+ * crosses the tap threshold), so a swipe never skips several items. Repeat the
+ * swipe to move further. Holding the centre after a tap-ish press (no movement)
+ * emits `START_LONG:DPAD_CENTER` then `END_LONG:DPAD_CENTER`, the TV's hold
+ * gesture (context menus, "move app"); a quick tap stays a short select. The knob
+ * follows the finger through a lightly under-damped spring (a touch of lag, a
+ * small overshoot on release), tilts with drag velocity, and the pad lights the
+ * edge you are pushing toward.
  */
 @customElement('atv-touchpad')
 export class AtvTouchpad extends LitElement {
@@ -24,7 +29,9 @@ export class AtvTouchpad extends LitElement {
 
   private okTimer?: ReturnType<typeof setTimeout>;
   private tapTimer?: ReturnType<typeof setTimeout>;
+  private longTimer?: ReturnType<typeof setTimeout>;
   private tapId = 0;
+  private longActive = false;
 
   private originX = 0;
   private originY = 0;
@@ -33,6 +40,7 @@ export class AtvTouchpad extends LitElement {
   private originLX = 0;
   private originLY = 0;
   private moved = false;
+  private emitted = false;
   private centerX = 0;
   private centerY = 0;
   private maxR = 0;
@@ -53,6 +61,7 @@ export class AtvTouchpad extends LitElement {
     cancelAnimationFrame(this.raf);
     clearTimeout(this.okTimer);
     clearTimeout(this.tapTimer);
+    clearTimeout(this.longTimer);
   }
 
   private clampToRadius(dx: number, dy: number): { x: number; y: number } {
@@ -143,8 +152,21 @@ export class AtvTouchpad extends LitElement {
   private onClick = (e: PointerEvent) => {
     this.pressed = true;
     this.moved = false;
+    this.emitted = false;
+    this.longActive = false;
     this.originX = this.lastX = e.clientX;
     this.originY = this.lastY = e.clientY;
+    // Holding select without moving becomes a long press (START_LONG on the way
+    // down, END_LONG on release) so the TV opens its hold menu; a quick tap stays
+    // a normal select.
+    clearTimeout(this.longTimer);
+    this.longTimer = setTimeout(() => {
+      if (this.pressed && !this.moved) {
+        this.longActive = true;
+        this.flashOk();
+        fireKey(this, `START_LONG:${KEYS.center}`);
+      }
+    }, LONG_PRESS_MS);
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     this.centerX = rect.left + rect.width / 2;
     this.centerY = rect.top + rect.height / 2;
@@ -160,28 +182,35 @@ export class AtvTouchpad extends LitElement {
     }
   };
 
+  private dirFrom(dx: number, dy: number): string {
+    return Math.abs(dx) >= Math.abs(dy)
+      ? dx > 0
+        ? KEYS.right
+        : KEYS.left
+      : dy > 0
+        ? KEYS.down
+        : KEYS.up;
+  }
+
   private onMove(e: PointerEvent) {
     if (!this.pressed) return;
-    this.setTarget(e.clientX, e.clientY);
-    const dx = e.clientX - this.lastX;
-    const dy = e.clientY - this.lastY;
-    const total = Math.hypot(e.clientX - this.originX, e.clientY - this.originY);
-    if (total > TAP_THRESHOLD_PX) this.moved = true;
-
-    if (Math.hypot(dx, dy) < SWIPE_STEP_PX) return;
-
-    const key =
-      Math.abs(dx) >= Math.abs(dy)
-        ? dx > 0
-          ? KEYS.right
-          : KEYS.left
-        : dy > 0
-          ? KEYS.down
-          : KEYS.up;
-    fireKey(this, key);
-    // Advance the reference so a continued drag emits the next step.
     this.lastX = e.clientX;
     this.lastY = e.clientY;
+    this.setTarget(e.clientX, e.clientY);
+    const dx = e.clientX - this.originX;
+    const dy = e.clientY - this.originY;
+    if (Math.hypot(dx, dy) > TAP_THRESHOLD_PX) this.moved = true;
+    // Any real movement means this is a swipe, not a long press.
+    if (this.moved) {
+      clearTimeout(this.longTimer);
+      this.longTimer = undefined;
+    }
+    // Emit at most one direction per gesture: the first time the drag crosses
+    // the step threshold, then lock until pointerup.
+    if (!this.emitted && Math.hypot(dx, dy) >= SWIPE_STEP_PX) {
+      this.emitted = true;
+      fireKey(this, this.dirFrom(dx, dy));
+    }
   }
 
   private flashOk() {
@@ -204,12 +233,24 @@ export class AtvTouchpad extends LitElement {
   }
 
   private onUp() {
-    if (this.pressed && !this.moved) {
-      fireKey(this, KEYS.center);
-      this.flashOk();
-      this.fireTap();
+    if (this.pressed) {
+      if (this.longActive) {
+        fireKey(this, `END_LONG:${KEYS.center}`);
+      } else if (!this.moved) {
+        fireKey(this, KEYS.center);
+        this.flashOk();
+        this.fireTap();
+      } else if (!this.emitted) {
+        // Moved past the tap threshold but not far enough to emit mid-drag;
+        // still count it as one step so a short swipe is never a no-op.
+        fireKey(this, this.dirFrom(this.lastX - this.originX, this.lastY - this.originY));
+      }
     }
+    clearTimeout(this.longTimer);
+    this.longTimer = undefined;
+    this.longActive = false;
     this.pressed = false;
+    this.emitted = false;
     this.padDir = null;
     this.target.x = 0;
     this.target.y = 0;

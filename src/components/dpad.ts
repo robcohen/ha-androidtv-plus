@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { KEYS } from '../const';
+import { KEYS, LONG_PRESS_MS } from '../const';
 import { fireKey } from './events';
 import { HoldRepeater } from './hold';
 
@@ -11,15 +11,38 @@ export class AtvDpad extends LitElement {
   });
 
   private activeKey?: string;
+  private centerTimer?: ReturnType<typeof setTimeout>;
+  private centerLong = false;
 
   private press(key: string) {
+    if (key === KEYS.center) {
+      this.centerLong = false;
+      this.centerTimer = setTimeout(() => {
+        this.centerLong = true;
+        fireKey(this, `START_LONG:${KEYS.center}`);
+      }, LONG_PRESS_MS);
+      return;
+    }
     this.activeKey = key;
     this.repeater.start();
   }
 
-  private release() {
+  private release(key: string) {
+    if (key === KEYS.center || this.centerTimer !== undefined) {
+      if (this.centerTimer !== undefined) {
+        clearTimeout(this.centerTimer);
+        this.centerTimer = undefined;
+      }
+      fireKey(this, this.centerLong ? `END_LONG:${KEYS.center}` : KEYS.center);
+      this.centerLong = false;
+    }
     this.activeKey = undefined;
     this.repeater.stop();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    clearTimeout(this.centerTimer);
   }
 
   private button(key: string, icon: string, label: string) {
@@ -37,9 +60,9 @@ export class AtvDpad extends LitElement {
           }
           this.press(key);
         }}
-        @pointerup=${() => this.release()}
-        @pointercancel=${() => this.release()}
-        @pointerleave=${() => this.release()}
+        @pointerup=${() => this.release(key)}
+        @pointercancel=${() => this.release(key)}
+        @pointerleave=${() => this.release(key)}
         @contextmenu=${(e: Event) => e.preventDefault()}
       >
         <ha-icon icon=${icon}></ha-icon>
